@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Account | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page account-page">
+
+<div class="container">
+
+
+    <!-- ======================================================
+         PAGE HEADER
+         ====================================================== -->
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Your account
+            </span>
+
+            <h1 class="page-title">
+                My Profile
+            </h1>
+
+            <p class="page-description">
+                View your personal information and manage
+                your PetCare Portal account.
+            </p>
+
+        </div>
+
+
+        <div class="page-header-actions">
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         PROFILE HERO
+         ====================================================== -->
+
+    <div class="account-profile-card reveal">
+
+        <div class="account-profile-main">
+
+            <div class="account-avatar">
+
+                {{ request.user.full_name|slice:":1"|upper }}
+
+            </div>
+
+
+            <div class="account-profile-heading">
+
+                <span class="account-status">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Active account
+                </span>
+
+                <h2>
+                    {{ request.user.full_name }}
+                </h2>
+
+                <p>
+                    {{ request.user.email }}
+                </p>
+
+                <span class="account-member-since">
+
+                    <i class="fa-regular fa-calendar"></i>
+
+                    Member since
+                    {{ request.user.created_at|date:"F Y" }}
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="account-profile-actions">
+
+            <a
+                href="{% url 'account_edit' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-regular fa-pen-to-square"></i>
+                Edit profile
+            </a>
+
+            <a
+                href="{% url 'notification_settings' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-regular fa-bell"></i>
+                Notifications
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         ACCOUNT STATISTICS
+         ====================================================== -->
+
+    <div class="account-stat-grid">
+
+        <div class="account-stat-card reveal">
+
+            <div class="account-stat-icon">
+                <i class="fa-solid fa-paw"></i>
+            </div>
+
+            <div>
+                <strong>
+                    {{ pet_count }}
+                </strong>
+
+                <span>
+                    My pets
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="account-stat-card reveal">
+
+            <div class="account-stat-icon">
+                <i class="fa-regular fa-comments"></i>
+            </div>
+
+            <div>
+                <strong>
+                    {{ post_count }}
+                </strong>
+
+                <span>
+                    Community posts
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="account-stat-card reveal">
+
+            <div class="account-stat-icon">
+                <i class="fa-solid fa-house-chimney-heart"></i>
+            </div>
+
+            <div>
+                <strong>
+                    {{ active_adoption_count }}
+                </strong>
+
+                <span>
+                    Active adoptions
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="account-stat-card reveal">
+
+            <div class="account-stat-icon">
+                <i class="fa-regular fa-bell"></i>
+            </div>
+
+            <div>
+                <strong>
+                    {{ pending_reminder_count }}
+                </strong>
+
+                <span>
+                    Pending reminders
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         ACCOUNT DETAILS
+         ====================================================== -->
+
+    <div class="row g-4 account-content-row">
+
+
+        <!-- ==================================================
+             PERSONAL INFORMATION
+             ================================================== -->
+
+        <div class="col-lg-8">
+
+            <div class="account-section-card reveal">
+
+                <div class="account-section-header">
+
+                    <div>
+
+                        <span class="account-section-icon">
+                            <i class="fa-regular fa-user"></i>
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Personal information
+                            </h2>
+
+                            <p>
+                                Information associated with your account.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="account-info-list">
+
+
+                    <!-- FULL NAME -->
+
+                    <div class="account-info-row">
+
+                        <div class="account-info-label">
+
+                            <i class="fa-regular fa-user"></i>
+
+                            <span>
+                                Full name
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-info-value">
+
+                            {{ request.user.full_name }}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- EMAIL -->
+
+                    <div class="account-info-row">
+
+                        <div class="account-info-label">
+
+                            <i class="fa-regular fa-envelope"></i>
+
+                            <span>
+                                Email address
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-info-value">
+
+                            {{ request.user.email }}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PHONE -->
+
+                    <div class="account-info-row">
+
+                        <div class="account-info-label">
+
+                            <i class="fa-solid fa-phone"></i>
+
+                            <span>
+                                Phone number
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-info-value">
+
+                            {% if request.user.phone %}
+
+                                {{ request.user.phone }}
+
+                            {% else %}
+
+                                <span class="account-muted-value">
+                                    Not provided
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CREATED -->
+
+                    <div class="account-info-row">
+
+                        <div class="account-info-label">
+
+                            <i class="fa-regular fa-calendar-plus"></i>
+
+                            <span>
+                                Account created
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-info-value">
+
+                            {{ request.user.created_at|date:"M d, Y" }}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ACCOUNT STATUS -->
+
+                    <div class="account-info-row">
+
+                        <div class="account-info-label">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <span>
+                                Account status
+                            </span>
+
+                        </div>
+
+
+                        <div class="account-info-value">
+
+                            {% if request.user.is_active %}
+
+                                <span class="account-active-badge">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="account-inactive-badge">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             ACCOUNT SETTINGS
+             ================================================== -->
+
+        <div class="col-lg-4">
+
+            <div class="account-section-card account-settings-card reveal">
+
+                <div class="account-section-header">
+
+                    <div>
+
+                        <span class="account-section-icon">
+                            <i class="fa-solid fa-gear"></i>
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Account settings
+                            </h2>
+
+                            <p>
+                                Manage your account preferences.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="account-setting-list">
+
+
+                    <!-- NOTIFICATIONS -->
+
+                    <a
+                        href="{% url 'notification_settings' %}"
+                        class="account-setting-item"
+                    >
+
+                        <div class="account-setting-icon">
+                            <i class="fa-regular fa-bell"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Notification settings
+                            </strong>
+
+                            <span>
+                                Manage browser push notifications.
+                            </span>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+
+
+                    <!-- PASSWORD RESET -->
+
+                    <a
+                        href="{% url 'password_change' %}"
+                        class="account-setting-item"
+                    >
+
+                        <div class="account-setting-icon">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Password
+                            </strong>
+
+                            <span>
+                                Change your account password.
+                            </span>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+                    
+
+                    <!-- LOG OUT -->
+
+                    <a
+                        href="{% url 'logout' %}"
+                        class="
+                            account-setting-item
+                            account-setting-danger
+                        "
+                    >
+
+                        <div class="account-setting-icon">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Log out
+                            </strong>
+
+                            <span>
+                                Sign out of this account.
+                            </span>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

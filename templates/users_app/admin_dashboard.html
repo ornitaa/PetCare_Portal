@@ -1,0 +1,829 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Dashboard | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page admin-dashboard-page">
+
+<div class="container">
+
+
+    <!-- ======================================================
+         HEADER
+         ====================================================== -->
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Administration
+            </span>
+
+            <h1 class="page-title">
+                Admin Dashboard
+            </h1>
+
+            <p class="page-description">
+                Monitor PetCare Portal activity, users,
+                moderation and system records.
+            </p>
+
+        </div>
+
+
+        <div class="page-header-actions">
+
+            <a
+                href="{% url 'admin:index' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                Django Admin
+            </a>
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-house"></i>
+                User Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         ADMIN WELCOME
+         ====================================================== -->
+
+    <div class="admin-welcome-card reveal">
+
+        <div class="admin-welcome-main">
+
+            <div class="admin-welcome-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+
+            <div>
+
+                <span>
+                    Administrator
+                </span>
+
+                <h2>
+                    Welcome, {{ request.user.full_name }}
+                </h2>
+
+                <p>
+                    Here's an overview of activity across
+                    PetCare Portal.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-welcome-badge">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            Staff access
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         MAIN STATISTICS
+         ====================================================== -->
+
+    <div class="admin-stat-grid">
+
+
+        <div class="admin-stat-card reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-solid fa-users"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ total_users }}
+                </strong>
+
+                <span>
+                    Registered users
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-stat-card reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-solid fa-paw"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ total_pets }}
+                </strong>
+
+                <span>
+                    Registered pets
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-stat-card reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-regular fa-comments"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ total_posts }}
+                </strong>
+
+                <span>
+                    Community posts
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-stat-card admin-stat-attention reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ pending_post_count }}
+                </strong>
+
+                <span>
+                    Pending approvals
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-stat-card reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-solid fa-heart"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ active_adoption_count }}
+                </strong>
+
+                <span>
+                    Active adoptions
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-stat-card reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-solid fa-syringe"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ total_vaccinations }}
+                </strong>
+
+                <span>
+                    Vaccination records
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-stat-card reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-regular fa-calendar-check"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ upcoming_vaccination_count }}
+                </strong>
+
+                <span>
+                    Upcoming vaccinations
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="admin-stat-card reveal">
+
+            <span class="admin-stat-icon">
+                <i class="fa-regular fa-bell"></i>
+            </span>
+
+            <div>
+
+                <strong>
+                    {{ pending_reminder_count }}
+                </strong>
+
+                <span>
+                    Pending reminders
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         MAIN CONTENT
+         ====================================================== -->
+
+    <div class="row g-4 admin-dashboard-content">
+
+
+        <!-- ==================================================
+             PENDING MODERATION
+             ================================================== -->
+
+        <div class="col-xl-7">
+
+            <div class="admin-panel-card reveal">
+
+                <div class="admin-panel-header">
+
+                    <div>
+
+                        <span class="admin-panel-icon admin-panel-warning">
+                            <i class="fa-solid fa-shield"></i>
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Pending moderation
+                            </h2>
+
+                            <p>
+                                Community posts waiting for review.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <span class="admin-count-badge">
+                        {{ pending_post_count }}
+                    </span>
+
+                </div>
+
+
+                <div class="admin-list">
+
+                    {% for post in pending_posts %}
+
+                        <div class="admin-list-item">
+
+                            <div class="admin-list-avatar">
+                                {{ post.author.full_name|slice:":1"|upper }}
+                            </div>
+
+
+                            <div class="admin-list-content">
+
+                                <strong>
+                                    {{ post.title|default:"Community post" }}
+                                </strong>
+
+                                <span>
+                                    By {{ post.author.full_name }}
+                                </span>
+
+                                <small>
+                                    {{ post.created_at|date:"M d, Y · g:i A" }}
+                                </small>
+
+                            </div>
+
+
+                            <div class="admin-moderation-actions">
+
+                                <a
+                                    href="{% url 'community_post_detail' post.post_id %}"
+                                    class="admin-moderation-btn view"
+                                    title="Review post"
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                    View
+                                </a>
+
+
+                                <form
+                                    method="post"
+                                    action="{% url 'community_post_approve' post.post_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="admin-moderation-btn approve"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                        Approve
+                                    </button>
+
+                                </form>
+
+
+                                <form
+                                    method="post"
+                                    action="{% url 'community_post_reject' post.post_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="admin-moderation-btn reject"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i>
+                                        Reject
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+
+                    {% empty %}
+
+                        <div class="admin-empty-state">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            <div>
+
+                                <strong>
+                                    No posts awaiting moderation
+                                </strong>
+
+                                <p>
+                                    Community moderation is currently clear.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             QUICK ADMIN ACTIONS
+             ================================================== -->
+
+        <div class="col-xl-5">
+
+            <div class="admin-panel-card reveal">
+
+                <div class="admin-panel-header">
+
+                    <div>
+
+                        <span class="admin-panel-icon">
+                            <i class="fa-solid fa-bolt"></i>
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Quick actions
+                            </h2>
+
+                            <p>
+                                Common administrative tools.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-quick-actions">
+
+
+                    <a
+                        href="{% url 'admin:index' %}"
+                        class="admin-action-item"
+                    >
+
+                        <span>
+                            <i class="fa-solid fa-database"></i>
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Database management
+                            </strong>
+
+                            <small>
+                                Open Django administration
+                            </small>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+
+
+                    <a
+                        href="{% url 'community_feed' %}"
+                        class="admin-action-item"
+                    >
+
+                        <span>
+                            <i class="fa-regular fa-comments"></i>
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Community
+                            </strong>
+
+                            <small>
+                                View community activity
+                            </small>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+
+
+                    <a
+                        href="{% url 'adoption_browse' %}"
+                        class="admin-action-item"
+                    >
+
+                        <span>
+                            <i class="fa-solid fa-heart"></i>
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Adoption listings
+                            </strong>
+
+                            <small>
+                                Review active listings
+                            </small>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+
+
+                    <a
+                        href="{% url 'report_overview' %}"
+                        class="admin-action-item"
+                    >
+
+                        <span>
+                            <i class="fa-solid fa-magnifying-glass-location"></i>
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Lost &amp; Found
+                            </strong>
+
+                            <small>
+                                Review current reports
+                            </small>
+
+                        </div>
+
+                        <i class="fa-solid fa-chevron-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         RECENT ACTIVITY
+         ====================================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- ==================================================
+             RECENT USERS
+             ================================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="admin-panel-card reveal">
+
+                <div class="admin-panel-header">
+
+                    <div>
+
+                        <span class="admin-panel-icon">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Recent users
+                            </h2>
+
+                            <p>
+                                Recently registered accounts.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-list">
+
+                    {% for user in recent_users %}
+
+                        <div class="admin-list-item">
+
+                            <div class="admin-list-avatar">
+                                {{ user.full_name|slice:":1"|upper }}
+                            </div>
+
+
+                            <div class="admin-list-content">
+
+                                <strong>
+                                    {{ user.full_name }}
+                                </strong>
+
+                                <span>
+                                    {{ user.email }}
+                                </span>
+
+                                <small>
+                                    Joined
+                                    {{ user.created_at|date:"M d, Y" }}
+                                </small>
+
+                            </div>
+
+
+                            {% if user.is_active %}
+
+                                <span class="admin-status-badge active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="admin-status-badge inactive">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    {% empty %}
+
+                        <div class="admin-empty-state">
+
+                            <i class="fa-regular fa-user"></i>
+
+                            <div>
+
+                                <strong>
+                                    No users found
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             RECENT ADOPTIONS
+             ================================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="admin-panel-card reveal">
+
+                <div class="admin-panel-header">
+
+                    <div>
+
+                        <span class="admin-panel-icon">
+                            <i class="fa-solid fa-heart"></i>
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Recent adoption listings
+                            </h2>
+
+                            <p>
+                                Latest adoption activity.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-list">
+
+                    {% for listing in recent_adoptions %}
+
+                        <div class="admin-list-item">
+
+                            <div class="admin-list-pet-icon">
+                                <i class="fa-solid fa-paw"></i>
+                            </div>
+
+
+                            <div class="admin-list-content">
+
+                                <strong>
+                                    {{ listing.pet.name }}
+                                </strong>
+
+                                <span>
+                                    Owner:
+                                    {{ listing.pet.owner.full_name }}
+                                </span>
+
+                                <small>
+                                    Listed
+                                    {{ listing.listed_at|date:"M d, Y" }}
+                                </small>
+
+                            </div>
+
+
+                            <span class="admin-status-badge">
+                                {{ listing.get_listing_status_display }}
+                            </span>
+
+                        </div>
+
+
+                    {% empty %}
+
+                        <div class="admin-empty-state">
+
+                            <i class="fa-solid fa-paw"></i>
+
+                            <div>
+
+                                <strong>
+                                    No adoption listings found
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         ADMIN FOOT NOTE
+         ====================================================== -->
+
+    <div class="admin-dashboard-note reveal">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        <p>
+            This dashboard is restricted to staff accounts.
+            Detailed record editing remains available through
+            Django Admin.
+        </p>
+
+    </div>
+
+
+</div>
+
+</section>
+
+{% endblock %}

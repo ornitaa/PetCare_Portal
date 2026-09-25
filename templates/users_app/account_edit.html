@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Profile | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page account-edit-page">
+
+<div class="container">
+
+
+    <!-- ======================================================
+         PAGE HEADER
+         ====================================================== -->
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Account settings
+            </span>
+
+            <h1 class="page-title">
+                Edit Profile
+            </h1>
+
+            <p class="page-description">
+                Update your personal information.
+            </p>
+
+        </div>
+
+
+        <div class="page-header-actions">
+
+            <a
+                href="{% url 'account_profile' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to profile
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         EDIT PROFILE CARD
+         ====================================================== -->
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8 col-xl-7">
+
+            <div class="account-section-card account-edit-card reveal">
+
+
+                <!-- HEADER -->
+
+                <div class="account-section-header">
+
+                    <div>
+
+                        <span class="account-section-icon">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Personal information
+                            </h2>
+
+                            <p>
+                                Keep your PetCare account details up to date.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     FORM
+                     ================================================== -->
+
+                <form method="post" novalidate>
+
+                    {% csrf_token %}
+
+
+                    <!-- NON FIELD ERRORS -->
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {% for error in form.non_field_errors %}
+                                <div>
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- FULL NAME -->
+
+                    <div class="account-form-group">
+
+                        <label
+                            for="{{ form.full_name.id_for_label }}"
+                            class="account-form-label"
+                        >
+                            <i class="fa-regular fa-user"></i>
+
+                            Full name
+                        </label>
+
+
+                        {{ form.full_name }}
+
+
+                        {% if form.full_name.errors %}
+
+                            <div class="account-field-errors">
+
+                                {% for error in form.full_name.errors %}
+
+                                    <span>
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- EMAIL - READ ONLY -->
+
+                    <div class="account-form-group">
+
+                        <label class="account-form-label">
+
+                            <i class="fa-regular fa-envelope"></i>
+
+                            Email address
+                        </label>
+
+
+                        <div class="account-readonly-field">
+
+                            <span>
+                                {{ request.user.email }}
+                            </span>
+
+                            <span class="account-readonly-badge">
+                                Login email
+                            </span>
+
+                        </div>
+
+
+                        <p class="account-form-help">
+                            Your email is currently used for login and
+                            password recovery, so it cannot be changed here.
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- PHONE -->
+
+                    <div class="account-form-group">
+
+                        <label
+                            for="{{ form.phone.id_for_label }}"
+                            class="account-form-label"
+                        >
+                            <i class="fa-solid fa-phone"></i>
+
+                            Phone number
+                        </label>
+
+
+                        {{ form.phone }}
+
+
+                        {% if form.phone.errors %}
+
+                            <div class="account-field-errors">
+
+                                {% for error in form.phone.errors %}
+
+                                    <span>
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <p class="account-form-help">
+                            Optional. This may be useful when other
+                            PetCare features need contact information.
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         ACTIONS
+                         ================================================== -->
+
+                    <div class="account-edit-actions">
+
+                        <a
+                            href="{% url 'account_profile' %}"
+                            class="pet-btn pet-btn-secondary"
+                        >
+                            Cancel
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="pet-btn pet-btn-primary"
+                        >
+                            <i class="fa-solid fa-check"></i>
+
+                            Save changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

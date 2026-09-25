@@ -1,0 +1,815 @@
+{% extends "base.html" %}
+
+{% block title %}
+Vaccinations | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page vaccination-overview-page">
+
+    <div class="container">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="pet-page-header reveal">
+
+            <div>
+
+                <span class="page-kicker">
+                    Preventive care
+                </span>
+
+                <h1 class="page-title">
+                    Vaccination Overview
+                </h1>
+
+                <p class="page-description">
+                    See vaccine schedules for all your pets,
+                    including upcoming and overdue doses.
+                </p>
+
+            </div>
+
+
+            {% if pets %}
+
+                <a
+                    href="#petVaccinationActions"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    Add vaccination
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="row g-4 vaccination-summary-row">
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="vaccine-summary-card reveal">
+
+                    <div class="vaccine-summary-icon summary-total">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            {{ vaccination_count }}
+                        </strong>
+
+                        <span>
+                            Total records
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="vaccine-summary-card reveal">
+
+                    <div class="vaccine-summary-icon summary-upcoming">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            {{ upcoming_count }}
+                        </strong>
+
+                        <span>
+                            Upcoming
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="vaccine-summary-card reveal">
+
+                    <div class="vaccine-summary-icon summary-overdue">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            {{ overdue_count }}
+                        </strong>
+
+                        <span>
+                            Overdue
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="vaccine-summary-card reveal">
+
+                    <div class="vaccine-summary-icon summary-unscheduled">
+                        <i class="fa-solid fa-calendar-minus"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            {{ unscheduled_count }}
+                        </strong>
+
+                        <span>
+                            No next date
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             OVERDUE
+             ================================================== -->
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="page-kicker vaccine-overdue-kicker">
+                        Needs attention
+                    </span>
+
+                    <h2 class="section-title mb-0">
+                        Overdue vaccinations
+                    </h2>
+
+                    <p class="section-text">
+                        Vaccine doses whose next due date has passed.
+                    </p>
+
+                </div>
+
+
+                {% if overdue_count %}
+
+                    <span class="status-count status-overdue">
+                        {{ overdue_count }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if overdue_vaccinations %}
+
+                <div class="row g-4">
+
+                    {% for vaccination in overdue_vaccinations %}
+
+                        <div class="col-lg-6">
+
+                            <div class="overview-vaccine-card overdue-card reveal">
+
+                                <div class="overview-vaccine-top">
+
+                                    <div class="overview-pet">
+
+                                        <div class="overview-pet-avatar">
+
+                                            {% if vaccination.pet.photo %}
+
+                                                <img
+                                                    src="{{ vaccination.pet.photo.url }}"
+                                                    alt="{{ vaccination.pet.name }}"
+                                                >
+
+                                            {% else %}
+
+                                                {% if vaccination.pet.species|lower == "cat" %}
+                                                    🐱
+                                                {% elif vaccination.pet.species|lower == "dog" %}
+                                                    🐶
+                                                {% else %}
+                                                    🐾
+                                                {% endif %}
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <small>
+                                                {{ vaccination.pet.name }}
+                                            </small>
+
+                                            <h3>
+                                                {{ vaccination.vaccine_name }}
+                                            </h3>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <span class="vaccine-status-badge overdue">
+                                        Overdue
+                                    </span>
+
+                                </div>
+
+
+                                <div class="overview-vaccine-dates">
+
+                                    <div>
+                                        <small>
+                                            Last administered
+                                        </small>
+
+                                        <strong>
+                                            {{ vaccination.administered_on|date:"M d, Y" }}
+                                        </strong>
+                                    </div>
+
+
+                                    <div>
+                                        <small>
+                                            Due date
+                                        </small>
+
+                                        <strong>
+                                            {{ vaccination.next_due_on|date:"M d, Y" }}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+
+                                {% if vaccination.dose_label %}
+
+                                    <div class="overview-vaccine-meta">
+                                        <i class="fa-solid fa-syringe"></i>
+                                        {{ vaccination.dose_label }}
+                                    </div>
+
+                                {% endif %}
+
+
+                                <div class="overview-card-actions">
+
+                                    <a
+                                        href="{% url 'vaccination_list' vaccination.pet.pet_id %}"
+                                        class="pet-btn pet-btn-secondary"
+                                    >
+                                        View history
+                                    </a>
+
+                                    <a
+                                        href="{% url 'vaccination_add' vaccination.pet.pet_id %}"
+                                        class="pet-btn pet-btn-primary"
+                                    >
+                                        <i class="fa-solid fa-plus"></i>
+                                        Add dose
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="overview-empty-good reveal">
+
+                    <div class="overview-empty-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+
+                    <div>
+                        <strong>
+                            No overdue vaccinations
+                        </strong>
+
+                        <p>
+                            There are currently no vaccine records
+                            past their next due date.
+                        </p>
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- ==================================================
+             UPCOMING
+             ================================================== -->
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="page-kicker">
+                        Scheduled care
+                    </span>
+
+                    <h2 class="section-title mb-0">
+                        Upcoming vaccinations
+                    </h2>
+
+                    <p class="section-text">
+                        Future vaccine doses already scheduled.
+                    </p>
+
+                </div>
+
+
+                {% if upcoming_count %}
+
+                    <span class="status-count status-upcoming">
+                        {{ upcoming_count }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if upcoming_vaccinations %}
+
+                <div class="row g-4">
+
+                    {% for vaccination in upcoming_vaccinations %}
+
+                        <div class="col-lg-6">
+
+                            <div class="overview-vaccine-card reveal">
+
+                                <div class="overview-vaccine-top">
+
+                                    <div class="overview-pet">
+
+                                        <div class="overview-pet-avatar">
+
+                                            {% if vaccination.pet.photo %}
+
+                                                <img
+                                                    src="{{ vaccination.pet.photo.url }}"
+                                                    alt="{{ vaccination.pet.name }}"
+                                                >
+
+                                            {% else %}
+
+                                                {% if vaccination.pet.species|lower == "cat" %}
+                                                    🐱
+                                                {% elif vaccination.pet.species|lower == "dog" %}
+                                                    🐶
+                                                {% else %}
+                                                    🐾
+                                                {% endif %}
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <small>
+                                                {{ vaccination.pet.name }}
+                                            </small>
+
+                                            <h3>
+                                                {{ vaccination.vaccine_name }}
+                                            </h3>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <span class="vaccine-status-badge upcoming">
+                                        Upcoming
+                                    </span>
+
+                                </div>
+
+
+                                <div class="overview-vaccine-dates">
+
+                                    <div>
+                                        <small>
+                                            Administered
+                                        </small>
+
+                                        <strong>
+                                            {{ vaccination.administered_on|date:"M d, Y" }}
+                                        </strong>
+                                    </div>
+
+
+                                    <div>
+                                        <small>
+                                            Next due
+                                        </small>
+
+                                        <strong>
+                                            {{ vaccination.next_due_on|date:"M d, Y" }}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+
+                                {% if vaccination.clinic_name %}
+
+                                    <div class="overview-vaccine-meta">
+
+                                        <i class="fa-solid fa-house-medical"></i>
+
+                                        {{ vaccination.clinic_name }}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <div class="overview-card-actions">
+
+                                    <a
+                                        href="{% url 'vaccination_list' vaccination.pet.pet_id %}"
+                                        class="pet-btn pet-btn-secondary"
+                                    >
+                                        View history
+                                    </a>
+
+                                    <a
+                                        href="{% url 'vaccination_edit' vaccination.pet.pet_id vaccination.vaccination_id %}"
+                                        class="pet-btn pet-btn-soft"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                        Edit
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="simple-empty-card reveal">
+
+                    <i class="fa-solid fa-calendar"></i>
+
+                    <div>
+
+                        <strong>
+                            No upcoming vaccinations
+                        </strong>
+
+                        <p>
+                            No future vaccine due dates have been
+                            recorded yet.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- ==================================================
+             UNSCHEDULED
+             ================================================== -->
+
+        {% if unscheduled_vaccinations %}
+
+            <div class="section-block">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-kicker">
+                            History
+                        </span>
+
+                        <h2 class="section-title mb-0">
+                            No next dose scheduled
+                        </h2>
+
+                        <p class="section-text">
+                            Vaccine records without another due date.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="row g-4">
+
+                    {% for vaccination in unscheduled_vaccinations %}
+
+                        <div class="col-lg-6">
+
+                            <div class="overview-vaccine-card reveal">
+
+                                <div class="overview-vaccine-top">
+
+                                    <div class="overview-pet">
+
+                                        <div class="overview-pet-avatar">
+
+                                            {% if vaccination.pet.photo %}
+
+                                                <img
+                                                    src="{{ vaccination.pet.photo.url }}"
+                                                    alt="{{ vaccination.pet.name }}"
+                                                >
+
+                                            {% else %}
+
+                                                🐾
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <small>
+                                                {{ vaccination.pet.name }}
+                                            </small>
+
+                                            <h3>
+                                                {{ vaccination.vaccine_name }}
+                                            </h3>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <span class="vaccine-status-badge unscheduled">
+                                        No next date
+                                    </span>
+
+                                </div>
+
+
+                                <div class="overview-vaccine-dates single-date">
+
+                                    <div>
+
+                                        <small>
+                                            Administered
+                                        </small>
+
+                                        <strong>
+                                            {{ vaccination.administered_on|date:"M d, Y" }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="overview-card-actions">
+
+                                    <a
+                                        href="{% url 'vaccination_list' vaccination.pet.pet_id %}"
+                                        class="pet-btn pet-btn-secondary"
+                                    >
+                                        View history
+                                    </a>
+
+                                    <a
+                                        href="{% url 'vaccination_edit' vaccination.pet.pet_id vaccination.vaccination_id %}"
+                                        class="pet-btn pet-btn-soft"
+                                    >
+                                        Add next date
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+
+        <!-- ==================================================
+             PET QUICK ACCESS
+             ================================================== -->
+
+        <div
+            class="section-block"
+            id="petVaccinationActions"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="page-kicker">
+                        Your pets
+                    </span>
+
+                    <h2 class="section-title mb-0">
+                        Manage by pet
+                    </h2>
+
+                    <p class="section-text">
+                        Open a pet's vaccination history or add a new record.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if pets %}
+
+                <div class="row g-4">
+
+                    {% for pet in pets %}
+
+                        <div class="col-md-6 col-xl-4">
+
+                            <div class="vaccination-pet-card reveal">
+
+                                <div class="vaccination-pet-info">
+
+                                    <div class="overview-pet-avatar large">
+
+                                        {% if pet.photo %}
+
+                                            <img
+                                                src="{{ pet.photo.url }}"
+                                                alt="{{ pet.name }}"
+                                            >
+
+                                        {% else %}
+
+                                            {% if pet.species|lower == "cat" %}
+                                                🐱
+                                            {% elif pet.species|lower == "dog" %}
+                                                🐶
+                                            {% else %}
+                                                🐾
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <h3>
+                                            {{ pet.name }}
+                                        </h3>
+
+                                        <p>
+                                            {{ pet.species }}
+
+                                            {% if pet.breed %}
+                                                · {{ pet.breed }}
+                                            {% endif %}
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="vaccination-pet-actions">
+
+                                    <a
+                                        href="{% url 'vaccination_list' pet.pet_id %}"
+                                        class="pet-btn pet-btn-secondary"
+                                    >
+                                        History
+                                    </a>
+
+                                    <a
+                                        href="{% url 'vaccination_add' pet.pet_id %}"
+                                        class="pet-btn pet-btn-primary"
+                                    >
+                                        <i class="fa-solid fa-plus"></i>
+                                        Add
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="pet-empty-large reveal">
+
+                    <div class="pet-empty-illustration">
+                        🐾
+                    </div>
+
+                    <h2>
+                        Add a pet first
+                    </h2>
+
+                    <p>
+                        Vaccination records need to belong to
+                        one of your registered pets.
+                    </p>
+
+                    <a
+                        href="{% url 'pet_add' %}"
+                        class="pet-btn pet-btn-primary"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Add a pet
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

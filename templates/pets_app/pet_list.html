@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Pets" %} | PetCare Portal{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+
+        <div class="pet-page-header reveal">
+
+            <div>
+
+                <span class="page-kicker">
+                    {% trans "My companions" %}
+                </span>
+
+
+                <h1 class="page-title">
+                    {% trans "My Pets" %}
+                </h1>
+
+
+                <p class="page-description">
+                    {% trans "Manage your pets and keep their important care information organized." %}
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'pet_add' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus me-2"></i>
+
+                {% trans "Add a pet" %}
+            </a>
+
+        </div>
+
+
+
+        {% if pets %}
+
+            <div class="row g-4 mt-2">
+
+
+                {% for pet in pets %}
+
+                    <div class="col-md-6 col-xl-4">
+
+                        <a
+                            href="{% url 'pet_detail' pet.pet_id %}"
+                            class="my-pet-card reveal"
+                        >
+
+
+                            <div class="my-pet-image">
+
+
+                                {% if pet.photo %}
+
+                                    <img
+                                        src="{{ pet.photo.url }}"
+                                        alt="{{ pet.name }}"
+                                    >
+
+
+                                {% else %}
+
+                                    <div class="my-pet-placeholder">
+
+
+                                        {% if pet.species|lower == "cat" %}
+
+                                            🐱
+
+                                        {% elif pet.species|lower == "dog" %}
+
+                                            🐶
+
+                                        {% else %}
+
+                                            🐾
+
+                                        {% endif %}
+
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <span class="pet-view-badge">
+
+                                    {% trans "View profile" %}
+
+                                    <i class="fa-solid fa-arrow-right ms-1"></i>
+
+                                </span>
+
+
+                            </div>
+
+
+
+                            <div class="my-pet-content">
+
+
+                                <div class="d-flex justify-content-between gap-3">
+
+
+                                    <div>
+
+                                        <h3 class="my-pet-name">
+                                            {{ pet.name }}
+                                        </h3>
+
+
+                                        <p class="my-pet-species">
+
+                                            {{ pet.species }}
+
+                                            {% if pet.breed %}
+
+                                                · {{ pet.breed }}
+
+                                            {% endif %}
+
+                                        </p>
+
+                                    </div>
+
+
+                                    <span class="pet-sex-pill">
+                                        {{ pet.get_sex_display }}
+                                    </span>
+
+
+                                </div>
+
+
+
+                                {% if pet.birth_date %}
+
+                                    <div class="pet-small-info">
+
+                                        <i class="fa-solid fa-cake-candles"></i>
+
+                                        {% blocktrans with birth=pet.birth_date|date:"M d, Y" %}
+                                            Born {{ birth }}
+                                        {% endblocktrans %}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        </a>
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="pet-empty-large reveal">
+
+
+                <div class="pet-empty-illustration">
+                    🐶🐱
+                </div>
+
+
+                <span class="page-kicker">
+                    {% trans "Your pet family" %}
+                </span>
+
+
+                <h2>
+                    {% trans "No pets here yet" %}
+                </h2>
+
+
+                <p>
+                    {% trans "Create your first pet profile and start keeping health records, growth updates, vaccinations and reminders together." %}
+                </p>
+
+
+                <a
+                    href="{% url 'pet_add' %}"
+                    class="pet-btn pet-btn-primary"
+                >
+
+                    <i class="fa-solid fa-plus me-2"></i>
+
+                    {% trans "Add my first pet" %}
+
+                </a>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</section>
+
+{% endblock %}

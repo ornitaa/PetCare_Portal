@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}
+Growth | {{ pet.name }}
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <a
+        href="{% url 'pet_detail' pet.pet_id %}"
+        class="back-link"
+    >
+        <i class="fa-solid fa-arrow-left"></i>
+        {{ pet.name }}'s profile
+    </a>
+
+
+    <div class="pet-page-header mt-4">
+
+        <div>
+
+            <span class="page-kicker">
+                Growth & development
+            </span>
+
+            <h1 class="page-title">
+                {{ pet.name }}'s Growth
+            </h1>
+
+            <p class="page-description">
+                Track weight, height and development milestones over time.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'growth_add' pet.pet_id %}"
+            class="pet-btn pet-btn-primary"
+        >
+            <i class="fa-solid fa-plus"></i>
+            Add measurement
+        </a>
+
+    </div>
+
+
+    {% if records %}
+
+        <!-- CURRENT SUMMARY -->
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+
+                <div class="growth-summary-card reveal">
+
+                    <div class="growth-summary-icon weight">
+                        <i class="fa-solid fa-weight-scale"></i>
+                    </div>
+
+                    <div>
+                        <span>Latest weight</span>
+
+                        <strong>
+                            {% if latest_record.weight_kg %}
+                                {{ latest_record.weight_kg }} kg
+                            {% else %}
+                                —
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="growth-summary-card reveal">
+
+                    <div class="growth-summary-icon height">
+                        <i class="fa-solid fa-ruler-vertical"></i>
+                    </div>
+
+                    <div>
+                        <span>Latest height</span>
+
+                        <strong>
+                            {% if latest_record.height_cm %}
+                                {{ latest_record.height_cm }} cm
+                            {% else %}
+                                —
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CHART -->
+
+        <div class="growth-chart-card reveal">
+
+            <div class="growth-chart-header">
+
+                <div>
+                    <span class="page-kicker">
+                        Progress
+                    </span>
+
+                    <h2>
+                        Growth history
+                    </h2>
+
+                    <p>
+                        Changes in {{ pet.name }}'s recorded
+                        measurements over time.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="growth-chart-wrap">
+
+                <canvas id="growthChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECORD HISTORY -->
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title mb-0">
+                        Measurement history
+                    </h2>
+
+                    <p class="section-text">
+                        All recorded growth measurements.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="growth-record-list">
+
+                {% for record in records %}
+
+                    <div class="growth-record-card reveal">
+
+                        <div class="growth-record-date">
+
+                            <strong>
+                                {{ record.measured_on|date:"d" }}
+                            </strong>
+
+                            <span>
+                                {{ record.measured_on|date:"M Y" }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="growth-record-content">
+
+                            <div class="growth-values">
+
+                                {% if record.weight_kg %}
+
+                                    <span>
+                                        <i class="fa-solid fa-weight-scale"></i>
+                                        {{ record.weight_kg }} kg
+                                    </span>
+
+                                {% endif %}
+
+
+                                {% if record.height_cm %}
+
+                                    <span>
+                                        <i class="fa-solid fa-ruler-vertical"></i>
+                                        {{ record.height_cm }} cm
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            {% if record.milestone %}
+
+                                <h3>
+                                    {{ record.milestone }}
+                                </h3>
+
+                            {% endif %}
+
+
+                            {% if record.notes %}
+
+                                <p>
+                                    {{ record.notes }}
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="growth-record-actions">
+
+                            <a
+                                href="{% url 'growth_edit' pet.pet_id record.growth_id %}"
+                                title="Edit"
+                            >
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+
+                            <a
+                                href="{% url 'growth_delete' pet.pet_id record.growth_id %}"
+                                class="growth-delete"
+                                title="Delete"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="pet-empty-large reveal">
+
+            <div class="pet-empty-illustration">
+                📈
+            </div>
+
+            <span class="page-kicker">
+                Growth journey
+            </span>
+
+            <h2>
+                No measurements yet
+            </h2>
+
+            <p>
+                Add {{ pet.name }}'s first weight or height measurement
+                to begin tracking growth over time.
+            </p>
+
+            <a
+                href="{% url 'growth_add' pet.pet_id %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Add first measurement
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+
+{% if records %}
+
+    {{ chart_labels|json_script:"growth-labels" }}
+    {{ weight_data|json_script:"growth-weights" }}
+    {{ height_data|json_script:"growth-heights" }}
+
+{% endif %}
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+{% if records %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const canvas =
+        document.getElementById("growthChart");
+
+    if (!canvas) {
+        return;
+    }
+
+
+    const labels = JSON.parse(
+        document.getElementById("growth-labels").textContent
+    );
+
+    const weights = JSON.parse(
+        document.getElementById("growth-weights").textContent
+    );
+
+    const heights = JSON.parse(
+        document.getElementById("growth-heights").textContent
+    );
+
+
+    new Chart(canvas, {
+
+        type: "line",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: "Weight (kg)",
+                    data: weights,
+
+                    borderColor: "#0b6b4f",
+                    backgroundColor: "rgba(11, 107, 79, 0.10)",
+
+                    tension: 0.35,
+
+                    spanGaps: true,
+
+                    pointRadius: 5,
+
+                    pointHoverRadius: 7,
+
+                    yAxisID: "weight",
+                },
+
+                {
+                    label: "Height (cm)",
+                    data: heights,
+
+                    borderColor: "#ef9f43",
+                    backgroundColor: "rgba(239, 159, 67, 0.10)",
+
+                    tension: 0.35,
+
+                    spanGaps: true,
+
+                    pointRadius: 5,
+
+                    pointHoverRadius: 7,
+
+                    yAxisID: "height",
+                }
+
+            ]
+
+        },
+
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+                mode: "index",
+                intersect: false,
+            },
+
+            plugins: {
+
+                legend: {
+                    position: "bottom",
+                },
+
+                tooltip: {
+                    enabled: true,
+                }
+
+            },
+
+            scales: {
+
+                weight: {
+                    type: "linear",
+                    position: "left",
+
+                    title: {
+                        display: true,
+                        text: "Weight (kg)",
+                    },
+
+                    beginAtZero: true,
+                },
+
+                height: {
+                    type: "linear",
+                    position: "right",
+
+                    title: {
+                        display: true,
+                        text: "Height (cm)",
+                    },
+
+                    beginAtZero: true,
+
+                    grid: {
+                        drawOnChartArea: false,
+                    }
+                }
+
+            }
+
+        }
+
+    });
+
+});
+
+</script>
+
+{% endif %}
+
+{% endblock %}

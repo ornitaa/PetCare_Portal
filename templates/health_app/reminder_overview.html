@@ -1,0 +1,546 @@
+{% extends "base.html" %}
+
+{% block title %}
+Care Reminders | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <!-- ======================================================
+         PAGE HEADER
+         ====================================================== -->
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Care schedule
+            </span>
+
+            <h1 class="page-title">
+                Care Reminders
+            </h1>
+
+            <p class="page-description">
+                Keep track of upcoming and overdue care
+                tasks across all your pets.
+            </p>
+
+        </div>
+
+
+        <div class="page-header-actions">
+
+            <a
+                href="{% url 'notification_settings' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-regular fa-bell"></i>
+                Notification settings
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         SUMMARY CARDS
+         ====================================================== -->
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+
+            <div class="reminder-summary-card overdue-summary reveal">
+
+                <div>
+
+                    <span>
+                        Needs attention
+                    </span>
+
+                    <strong>
+                        {{ overdue_count }}
+                    </strong>
+
+                    <p>
+                        Overdue reminders
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <div class="reminder-summary-card upcoming-summary reveal">
+
+                <div>
+
+                    <span>
+                        Scheduled
+                    </span>
+
+                    <strong>
+                        {{ upcoming_count }}
+                    </strong>
+
+                    <p>
+                        Upcoming reminders
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         UPCOMING REMINDERS
+         ====================================================== -->
+
+    <div class="section-block">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title mb-0">
+                    Upcoming
+                </h2>
+
+                <p class="section-text">
+                    Pending care tasks.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% if upcoming %}
+
+            <div class="reminder-overview-grid">
+
+                {% for reminder in upcoming %}
+
+                    <a
+                        href="{% url 'reminder_list' reminder.pet.pet_id %}"
+                        class="overview-reminder-card reveal"
+                    >
+
+                        <!-- PET NAME -->
+
+                        <div class="overview-reminder-pet">
+                            {{ reminder.pet.name }}
+                        </div>
+
+
+                        <!-- REMINDER TITLE -->
+
+                        <h3>
+                            {{ reminder.title }}
+                        </h3>
+
+
+                        <!-- REMINDER TYPE -->
+
+                        <p>
+                            {{ reminder.get_reminder_kind_display }}
+                        </p>
+
+
+
+                        <!-- ==================================
+                             VACCINATION REMINDER
+                             ================================== -->
+
+                        {% if reminder.vaccination %}
+
+                            <div class="vaccination-reminder-dates">
+
+
+                                <!-- ACTUAL VACCINATION DUE DATE -->
+
+                                <div class="vaccination-due-date">
+
+                                    <i class="fa-solid fa-syringe"></i>
+
+                                    <span>
+
+                                        Vaccination due:
+
+                                        <strong>
+                                            {{ reminder.vaccination.next_due_on|date:"M d, Y" }}
+                                        </strong>
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- NOTIFICATION DATE -->
+
+                                <div class="vaccination-alert-date">
+
+                                    <i class="fa-regular fa-bell"></i>
+
+                                    <span>
+                                        Reminder:
+                                        {{ reminder.remind_at|date:"M d, Y" }}
+                                        ·
+                                        {{ reminder.remind_at|time:"g:i A" }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                        {% else %}
+
+
+                            <!-- ==============================
+                                 NORMAL CARE REMINDER
+                                 ============================== -->
+
+                            <div class="overview-reminder-time">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                <span>
+                                    {{ reminder.remind_at|date:"M d, Y" }}
+                                    ·
+                                    {{ reminder.remind_at|time:"g:i A" }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="simple-empty-card">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <div>
+
+                    <strong>
+                        No upcoming reminders
+                    </strong>
+
+                    <p>
+                        Your care schedule is clear.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- ======================================================
+         OVERDUE REMINDERS
+         ====================================================== -->
+
+    {% if overdue %}
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title mb-0">
+                        Overdue
+                    </h2>
+
+                    <p class="section-text">
+                        These reminders need attention.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="reminder-overview-grid">
+
+                {% for reminder in overdue %}
+
+                    <a
+                        href="{% url 'reminder_list' reminder.pet.pet_id %}"
+                        class="
+                            overview-reminder-card
+                            overview-reminder-overdue
+                            reveal
+                        "
+                    >
+
+                        <!-- PET NAME -->
+
+                        <div class="overview-reminder-pet">
+                            {{ reminder.pet.name }}
+                        </div>
+
+
+                        <!-- REMINDER TITLE -->
+
+                        <h3>
+                            {{ reminder.title }}
+                        </h3>
+
+
+                        <!-- REMINDER TYPE -->
+
+                        <p>
+                            {{ reminder.get_reminder_kind_display }}
+                        </p>
+
+
+
+                        <!-- ==================================
+                             VACCINATION REMINDER
+                             ================================== -->
+
+                        {% if reminder.vaccination %}
+
+                            <div class="vaccination-reminder-dates">
+
+
+                                <!-- ACTUAL VACCINATION DUE DATE -->
+
+                                <div class="vaccination-due-date">
+
+                                    <i class="fa-solid fa-syringe"></i>
+
+                                    <span>
+
+                                        Vaccination due:
+
+                                        <strong>
+                                            {{ reminder.vaccination.next_due_on|date:"M d, Y" }}
+                                        </strong>
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- REMINDER / ALERT DATE -->
+
+                                <div class="vaccination-alert-date">
+
+                                    <i class="fa-regular fa-bell"></i>
+
+                                    <span>
+                                        Reminder:
+                                        {{ reminder.remind_at|date:"M d, Y" }}
+                                        ·
+                                        {{ reminder.remind_at|time:"g:i A" }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                        {% else %}
+
+
+                            <!-- ==============================
+                                 NORMAL CARE REMINDER
+                                 ============================== -->
+
+                            <div class="overview-reminder-time">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                <span>
+                                    {{ reminder.remind_at|date:"M d, Y" }}
+                                    ·
+                                    {{ reminder.remind_at|time:"g:i A" }}
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!-- ======================================================
+         MANAGE REMINDERS BY PET
+         ====================================================== -->
+
+    <div class="section-block">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title mb-0">
+                    Manage by pet
+                </h2>
+
+                <p class="section-text">
+                    Open a pet's care schedule.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for pet in pets %}
+
+                <div class="col-md-6 col-xl-4">
+
+                    <div class="vaccination-pet-card">
+
+
+                        <!-- PET INFORMATION -->
+
+                        <div class="vaccination-pet-info">
+
+                            <div class="overview-pet-avatar large">
+
+                                {% if pet.photo %}
+
+                                    <img
+                                        src="{{ pet.photo.url }}"
+                                        alt="{{ pet.name }}"
+                                    >
+
+                                {% else %}
+
+                                    🐾
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div>
+
+                                <h3>
+                                    {{ pet.name }}
+                                </h3>
+
+                                <p>
+                                    {{ pet.species }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PET REMINDER ACTIONS -->
+
+                        <div class="vaccination-pet-actions">
+
+                            <a
+                                href="{% url 'reminder_list' pet.pet_id %}"
+                                class="pet-btn pet-btn-secondary"
+                            >
+                                View
+                            </a>
+
+
+                            <a
+                                href="{% url 'reminder_add' pet.pet_id %}"
+                                class="pet-btn pet-btn-primary"
+                            >
+                                <i class="fa-solid fa-plus"></i>
+                                Add
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="col-12">
+
+                    <div class="simple-empty-card">
+
+                        <i class="fa-solid fa-paw"></i>
+
+                        <div>
+
+                            <strong>
+                                No pets found
+                            </strong>
+
+                            <p>
+                                Add a pet before creating care reminders.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

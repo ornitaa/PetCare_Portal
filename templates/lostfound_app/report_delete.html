@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}
+Delete Report | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-6">
+
+    <div class="delete-card reveal">
+
+        <div class="delete-icon">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+
+        <span class="page-kicker">
+            Lost & Found
+        </span>
+
+        <h1>
+            Delete this report?
+        </h1>
+
+        <p>
+            This {{ report.get_report_type_display|lower }}
+            report will be permanently removed.
+        </p>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <div class="delete-actions">
+
+                <a
+                    href="{% url 'report_detail' report.report_id %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    Keep report
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="danger-button"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                    Delete report
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

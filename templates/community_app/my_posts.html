@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Community Posts | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <div class="pet-page-header">
+
+        <div>
+
+            <a
+                href="{% url 'community_feed' %}"
+                class="back-link"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Community
+            </a>
+
+
+            <span class="page-kicker d-block mt-4">
+                My activity
+            </span>
+
+
+            <h1 class="page-title">
+                My Posts
+            </h1>
+
+
+            <p class="page-description">
+                Manage your community discussions and
+                check their moderation status.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'community_post_create' %}"
+            class="pet-btn pet-btn-primary"
+        >
+            <i class="fa-solid fa-plus"></i>
+            New post
+        </a>
+
+    </div>
+
+
+    {% if posts %}
+
+        <div class="community-feed">
+
+            {% for post in posts %}
+
+                <div class="community-post-card reveal">
+
+                    <div class="my-community-post-header">
+
+                        <span
+                            class="
+                                community-status
+                                community-status-{{ post.moderation_status|lower }}
+                            "
+                        >
+                            {{ post.get_moderation_status_display }}
+                        </span>
+
+
+                        <span class="community-date">
+                            {{ post.created_at|date:"M d, Y" }}
+                        </span>
+
+                    </div>
+
+
+                    <h3>
+                        {{ post.title }}
+                    </h3>
+
+
+                    <p>
+                        {{ post.body|truncatechars:220 }}
+                    </p>
+
+
+                    <div class="community-post-footer">
+
+                        <span>
+                            <i class="fa-regular fa-comment"></i>
+
+                            {{ post.approved_comment_count }}
+
+                            comment{{ post.approved_comment_count|pluralize }}
+                        </span>
+
+
+                        <div class="community-my-actions">
+
+                            <a
+                                href="{% url 'community_post_detail' post.post_id %}"
+                                class="community-small-button"
+                            >
+                                View
+                            </a>
+
+                            <a
+                                href="{% url 'community_post_edit' post.post_id %}"
+                                class="community-small-button"
+                            >
+                                Edit
+                            </a>
+
+                            <a
+                                href="{% url 'community_post_delete' post.post_id %}"
+                                class="community-small-button delete"
+                            >
+                                Delete
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="pet-empty-large">
+
+            <div class="pet-empty-illustration">
+                💬
+            </div>
+
+            <h2>
+                You haven't posted yet
+            </h2>
+
+            <p>
+                Share a question, story or helpful
+                experience with other pet owners.
+            </p>
+
+            <a
+                href="{% url 'community_post_create' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                Create your first post
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+{% endblock %}

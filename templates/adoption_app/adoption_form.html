@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ page_title }} | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-xl-9">
+
+    <div class="health-form-card reveal">
+
+        <a
+            href="{% url 'adoption_browse' %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Adoption
+        </a>
+
+
+        <span class="page-kicker d-block mt-4">
+            Adoption listing
+        </span>
+
+
+        <h1 class="health-form-title">
+            {{ page_title }}
+        </h1>
+
+
+        <p class="text-muted">
+            Provide enough information to help potential adopters
+            understand the pet and their needs.
+        </p>
+
+
+        <form
+            method="post"
+            class="mt-4"
+        >
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="alert alert-danger pet-alert">
+
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Pet
+                    </label>
+
+                    {{ form.pet }}
+
+                    <div class="form-hint">
+                        Only your pets without another active
+                        adoption listing are shown.
+                    </div>
+
+                    {% for error in form.pet.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Location
+                    </label>
+
+                    {{ form.location }}
+
+                    {% for error in form.location.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Adoption description
+                    </label>
+
+                    {{ form.description }}
+
+                    {% for error in form.description.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <div class="clean-action-bar">
+
+                <a
+                    href="{% url 'adoption_browse' %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-check"></i>
+                    {{ button_text }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

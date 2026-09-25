@@ -1,0 +1,582 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ listing.pet.name }} | Adoption
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+
+        <!-- ==================================================
+             BACK
+             ================================================== -->
+
+        <a
+            href="{% url 'adoption_browse' %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Adoption
+        </a>
+
+
+
+        <!-- ==================================================
+             ADOPTION DETAIL
+             ================================================== -->
+
+        <div class="adoption-detail-card reveal">
+
+            <div class="row g-4 align-items-start">
+
+
+                <!-- ==================================================
+                     PET PHOTO
+                     ================================================== -->
+
+                <div class="col-lg-5">
+
+                    <div class="adoption-detail-photo">
+
+                        {% if listing.pet.photo %}
+
+                            <img
+                                src="{{ listing.pet.photo.url }}"
+                                alt="{{ listing.pet.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="adoption-placeholder large">
+
+                                {% if listing.pet.species|lower == "cat" %}
+
+                                    🐱
+
+                                {% elif listing.pet.species|lower == "dog" %}
+
+                                    🐶
+
+                                {% else %}
+
+                                    🐾
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     PET INFORMATION
+                     ================================================== -->
+
+                <div class="col-lg-7">
+
+
+                    <!-- STATUS + DATE -->
+
+                    <div class="adoption-detail-top">
+
+                        <span
+                            class="
+                                adoption-status
+                                status-{{ listing.listing_status|lower }}
+                            "
+                        >
+                            {{ listing.get_listing_status_display }}
+                        </span>
+
+
+                        <span class="adoption-posted-date">
+                            Listed {{ listing.listed_at|date:"M d, Y" }}
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- PET NAME -->
+
+                    <h1 class="adoption-detail-title">
+                        {{ listing.pet.name }}
+                    </h1>
+
+
+
+                    <!-- PET META -->
+
+                    <p class="adoption-detail-meta">
+
+                        {{ listing.pet.species }}
+
+                        {% if listing.pet.breed %}
+                            · {{ listing.pet.breed }}
+                        {% endif %}
+
+                        · {{ listing.pet.get_sex_display }}
+
+                    </p>
+
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="adoption-detail-info">
+
+
+                        <!-- LOCATION -->
+
+                        <div>
+
+                            <span>
+                                <i class="fa-solid fa-location-dot"></i>
+                                Location
+                            </span>
+
+                            <strong>
+                                {{ listing.location }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- OWNER -->
+
+                        <div>
+
+                            <span>
+                                <i class="fa-regular fa-user"></i>
+                                Listed by
+                            </span>
+
+                            <strong>
+                                {{ listing.pet.owner.full_name }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ABOUT -->
+
+                    <div class="adoption-about">
+
+                        <h3>
+                            About {{ listing.pet.name }}
+                        </h3>
+
+                        <p>
+                            {{ listing.description|linebreaksbr }}
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         CONTACT OWNER
+                         Only other users can see this.
+                         Only while listing is ACTIVE.
+                         ================================================== -->
+
+                    {% if listing.pet.owner != request.user and listing.listing_status == "ACTIVE" %}
+
+                        <div class="contact-action-box">
+
+                            <div class="contact-action-icon">
+
+                                <i class="fa-solid fa-address-card"></i>
+
+                            </div>
+
+
+                            <div class="contact-action-content">
+
+                                <span class="page-kicker">
+                                    Interested in {{ listing.pet.name }}?
+                                </span>
+
+                                <h3>
+                                    Contact the pet owner
+                                </h3>
+
+                                <p>
+                                    View the owner's contact information
+                                    if you would like to discuss adopting
+                                    {{ listing.pet.name }}.
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="pet-btn pet-btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#adoptionContactModal"
+                            >
+                                <i class="fa-regular fa-address-card"></i>
+                                Contact owner
+                            </button>
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- ==================================================
+                         OWNER MANAGEMENT
+                         ================================================== -->
+
+                    {% if listing.pet.owner == request.user %}
+
+                        <div class="adoption-owner-actions">
+
+
+                            {% if listing.listing_status == "ACTIVE" %}
+
+
+                                <!-- MARK ADOPTED -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'adoption_mark_adopted' listing.listing_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="pet-btn pet-btn-primary"
+                                    >
+                                        <i class="fa-solid fa-heart"></i>
+                                        Mark adopted
+                                    </button>
+
+                                </form>
+
+
+
+                                <!-- EDIT -->
+
+                                <a
+                                    href="{% url 'adoption_edit' listing.listing_id %}"
+                                    class="pet-btn pet-btn-secondary"
+                                >
+                                    <i class="fa-solid fa-pen"></i>
+                                    Edit
+                                </a>
+
+
+
+                                <!-- CLOSE -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'adoption_close' listing.listing_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="pet-btn pet-btn-soft"
+                                    >
+                                        <i class="fa-solid fa-xmark"></i>
+                                        Close listing
+                                    </button>
+
+                                </form>
+
+
+                            {% else %}
+
+
+                                <!-- REOPEN -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'adoption_reopen' listing.listing_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="pet-btn pet-btn-primary"
+                                    >
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                        Reopen listing
+                                    </button>
+
+                                </form>
+
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==========================================================
+     CLEAN CONTACT OWNER MODAL
+     ========================================================== -->
+
+{% if listing.pet.owner != request.user and listing.listing_status == "ACTIVE" %}
+
+<div
+    class="modal fade pet-contact-modal"
+    id="adoptionContactModal"
+    tabindex="-1"
+    aria-labelledby="adoptionContactModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+
+            <!-- ==================================================
+                 HEADER
+                 ================================================== -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="page-kicker">
+                        Adoption Contact
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="adoptionContactModalLabel"
+                    >
+                        Owner Information
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 BODY
+                 ================================================== -->
+
+            <div class="modal-body">
+
+
+                <!-- OWNER -->
+
+                <div class="contact-person-card">
+
+                    <div class="contact-person-avatar">
+                        {{ listing.pet.owner.full_name|first|upper }}
+                    </div>
+
+
+                    <div class="contact-person-info">
+
+                        <strong>
+                            {{ listing.pet.owner.full_name }}
+                        </strong>
+
+                        <span>
+                            Owner of {{ listing.pet.name }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     CONTACT INFORMATION
+                     ================================================== -->
+
+                <div class="contact-info-clean">
+
+
+                    <!-- EMAIL -->
+
+                    <div class="contact-info-row">
+
+                        <div class="contact-info-icon">
+
+                            <i class="fa-solid fa-envelope"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="contact-info-label">
+                                Email
+                            </span>
+
+                            <div class="contact-info-value">
+                                {{ listing.pet.owner.email }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PHONE -->
+
+                    {% if listing.pet.owner.phone %}
+
+                        <div class="contact-info-row">
+
+                            <div class="contact-info-icon">
+
+                                <i class="fa-solid fa-phone"></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <span class="contact-info-label">
+                                    Phone
+                                </span>
+
+                                <div class="contact-info-value">
+                                    {{ listing.pet.owner.phone }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- PET -->
+
+                    <div class="contact-info-row">
+
+                        <div class="contact-info-icon">
+
+                            <i class="fa-solid fa-paw"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="contact-info-label">
+                                Pet
+                            </span>
+
+                            <div class="contact-info-value">
+
+                                {{ listing.pet.name }}
+
+                                {% if listing.pet.breed %}
+                                    · {{ listing.pet.breed }}
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- LOCATION -->
+
+                    <div class="contact-info-row">
+
+                        <div class="contact-info-icon">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="contact-info-label">
+                                Listing location
+                            </span>
+
+                            <div class="contact-info-value">
+                                {{ listing.location }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     PRIVACY
+                     ================================================== -->
+
+                <div class="contact-privacy-box">
+
+                    <i class="fa-solid fa-shield-heart"></i>
+
+                    <p>
+                        Contact information is visible only to
+                        logged-in PetCare Portal users.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

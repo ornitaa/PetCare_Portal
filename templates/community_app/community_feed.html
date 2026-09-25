@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}
+Community | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page community-page">
+
+<div class="container">
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Pet parent community
+            </span>
+
+            <h1 class="page-title">
+                Community
+            </h1>
+
+            <p class="page-description">
+                Ask questions, share experiences and
+                connect with other pet owners.
+            </p>
+
+        </div>
+
+
+        <div class="action-group">
+
+            <a
+                href="{% url 'my_community_posts' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-regular fa-user"></i>
+                My posts
+            </a>
+
+
+            <a
+                href="{% url 'community_post_create' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Create post
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="community-banner reveal">
+
+        <div class="community-banner-icon">
+            <i class="fa-solid fa-paw"></i>
+        </div>
+
+        <div>
+
+            <span class="page-kicker">
+                Share & learn
+            </span>
+
+            <h2>
+                Every pet parent has something to share.
+            </h2>
+
+            <p>
+                Exchange practical experiences, ask questions
+                and support other pet owners.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="section-block">
+
+        <div class="community-toolbar">
+
+            <div>
+
+                <h2 class="section-title mb-0">
+                    Latest discussions
+                </h2>
+
+                <p class="section-text">
+                    Approved community posts from pet owners.
+                </p>
+
+            </div>
+
+
+            <form
+                method="get"
+                class="community-search"
+            >
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ search }}"
+                    placeholder="Search discussions..."
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        {% if posts %}
+
+            <div class="community-feed">
+
+                {% for post in posts %}
+
+                    <article class="community-post-card reveal">
+
+                        <div class="community-post-author">
+
+                            <div class="community-avatar">
+
+                                {{ post.author.full_name|first|upper }}
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    {{ post.author.full_name }}
+                                </strong>
+
+                                <span>
+                                    {{ post.created_at|timesince }} ago
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="{% url 'community_post_detail' post.post_id %}"
+                            class="community-post-content"
+                        >
+
+                            <h3>
+                                {{ post.title }}
+                            </h3>
+
+
+                            <p>
+                                {{ post.body|truncatechars:260 }}
+                            </p>
+
+
+                            {% if post.image %}
+
+                                <div class="community-post-image">
+
+                                    <img
+                                        src="{{ post.image.url }}"
+                                        alt="{{ post.title }}"
+                                    >
+
+                                </div>
+
+                            {% endif %}
+
+                        </a>
+
+
+                        <div class="community-post-footer">
+
+                            <span>
+
+                                <i class="fa-regular fa-comment"></i>
+
+                                {{ post.approved_comment_count }}
+
+                                comment{{ post.approved_comment_count|pluralize }}
+
+                            </span>
+
+
+                            <a
+                                href="{% url 'community_post_detail' post.post_id %}"
+                            >
+                                Join discussion
+
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="pet-empty-large reveal">
+
+                <div class="pet-empty-illustration">
+                    💬
+                </div>
+
+                <h2>
+                    No discussions found
+                </h2>
+
+                <p>
+                    Be the first to start a helpful
+                    conversation with the community.
+                </p>
+
+
+                <a
+                    href="{% url 'community_post_create' %}"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    Create post
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

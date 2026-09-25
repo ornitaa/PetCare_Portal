@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ page_title }} | PetCare
+{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-xl-8">
+
+    <div class="health-form-card reveal">
+
+        <a
+            href="{% url 'vaccination_list' pet.pet_id %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Vaccinations
+        </a>
+
+
+        <span class="page-kicker d-block mt-4">
+            {{ pet.name }} · Preventive care
+        </span>
+
+
+        <h1 class="health-form-title">
+            {{ page_title }}
+        </h1>
+
+
+        <form method="post" class="mt-4">
+
+            {% csrf_token %}
+
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Vaccine name
+                    </label>
+
+                    {{ form.vaccine_name }}
+
+                    {% for error in form.vaccine_name.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Dose / booster
+                    </label>
+
+                    {{ form.dose_label }}
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Administered on
+                    </label>
+
+                    {{ form.administered_on }}
+
+                    {% for error in form.administered_on.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Next due
+                    </label>
+
+                    {{ form.next_due_on }}
+
+                    {% for error in form.next_due_on.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Clinic
+                    </label>
+
+                    {{ form.clinic_name }}
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    {{ form.notes }}
+
+                </div>
+
+            </div>
+
+
+            <div class="clean-action-bar">
+
+                <a
+                    href="{% url 'vaccination_list' pet.pet_id %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-check"></i>
+                    {{ button_text }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

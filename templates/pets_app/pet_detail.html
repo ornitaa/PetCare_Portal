@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ pet.name }} | PetCare Portal{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+
+        <!-- ==================================================
+             PET PROFILE
+             ================================================== -->
+
+        <div class="pet-profile-hero reveal">
+
+
+            <div class="profile-back-row">
+
+                <a
+                    href="{% url 'pet_list' %}"
+                    class="pet-back-button"
+                >
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>
+                        {% trans "Back to My Pets" %}
+                    </span>
+                </a>
+
+            </div>
+
+
+
+            <div class="row align-items-center g-4">
+
+
+                <!-- PHOTO -->
+
+                <div class="col-lg-4">
+
+                    <div class="pet-profile-image">
+
+
+                        {% if pet.photo %}
+
+                            <img
+                                src="{{ pet.photo.url }}"
+                                alt="{{ pet.name }}"
+                            >
+
+
+                        {% else %}
+
+                            <div class="profile-placeholder">
+
+                                {% if pet.species|lower == "cat" %}
+
+                                    🐱
+
+                                {% elif pet.species|lower == "dog" %}
+
+                                    🐶
+
+                                {% else %}
+
+                                    🐾
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PET DETAILS -->
+
+                <div class="col-lg-8">
+
+
+                    <span class="page-kicker">
+                        {% trans "Pet profile" %}
+                    </span>
+
+
+
+                    <div
+                        class="
+                            d-flex
+                            justify-content-between
+                            align-items-start
+                            flex-wrap
+                            gap-4
+                        "
+                    >
+
+
+                        <div>
+
+                            <h1 class="pet-profile-name">
+                                {{ pet.name }}
+                            </h1>
+
+
+                            <p class="pet-profile-summary">
+
+                                {{ pet.species }}
+
+                                {% if pet.breed %}
+
+                                    · {{ pet.breed }}
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+
+                        <!-- PROFILE ACTIONS -->
+
+                        <div class="action-group">
+
+
+                            <a
+                                href="{% url 'pet_edit' pet.pet_id %}"
+                                class="pet-btn pet-btn-secondary"
+                            >
+                                <i class="fa-solid fa-pen"></i>
+
+                                {% trans "Edit profile" %}
+                            </a>
+
+
+                            {% trans "Delete pet" as delete_pet_title %}
+
+                            {% blocktrans with name=pet.name asvar delete_pet_aria %}
+                                Delete {{ name }}
+                            {% endblocktrans %}
+
+                            <a
+                                href="{% url 'pet_delete' pet.pet_id %}"
+                                class="pet-delete-button"
+                                title="{{ delete_pet_title }}"
+                                aria-label="{{ delete_pet_aria }}"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="pet-information-grid">
+
+
+                        <!-- SPECIES -->
+
+                        <div class="pet-info-item">
+
+                            <span class="pet-info-icon">
+                                <i class="fa-solid fa-paw"></i>
+                            </span>
+
+
+                            <div>
+
+                                <small>
+                                    {% trans "Species" %}
+                                </small>
+
+                                <strong>
+                                    {{ pet.species }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- BREED -->
+
+                        <div class="pet-info-item">
+
+                            <span class="pet-info-icon">
+                                <i class="fa-solid fa-dna"></i>
+                            </span>
+
+
+                            <div>
+
+                                <small>
+                                    {% trans "Breed" %}
+                                </small>
+
+
+                                <strong>
+
+                                    {% if pet.breed %}
+
+                                        {{ pet.breed }}
+
+                                    {% else %}
+
+                                        {% trans "Not specified" %}
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- SEX -->
+
+                        <div class="pet-info-item">
+
+                            <span class="pet-info-icon">
+                                <i class="fa-solid fa-venus-mars"></i>
+                            </span>
+
+
+                            <div>
+
+                                <small>
+                                    {% trans "Sex" %}
+                                </small>
+
+                                <strong>
+                                    {{ pet.get_sex_display }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- BIRTH DATE -->
+
+                        <div class="pet-info-item">
+
+                            <span class="pet-info-icon">
+                                <i class="fa-solid fa-cake-candles"></i>
+                            </span>
+
+
+                            <div>
+
+                                <small>
+                                    {% trans "Birth date" %}
+                                </small>
+
+
+                                <strong>
+
+                                    {% if pet.birth_date %}
+
+                                        {{ pet.birth_date|date:"M d, Y" }}
+
+                                    {% else %}
+
+                                        {% trans "Unknown" %}
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             CARE MODULES
+             ================================================== -->
+
+        <div class="section-block">
+
+
+            <div class="section-header">
+
+                <div>
+
+
+                    <h2 class="section-title mb-0">
+
+                        {% blocktrans with name=pet.name %}
+                            {{ name }}'s care
+                        {% endblocktrans %}
+
+                    </h2>
+
+
+                    <p class="section-text">
+                        {% trans "Keep health and everyday care information organized in one place." %}
+                    </p>
+
+
+                </div>
+
+            </div>
+
+
+
+            <div class="row g-4">
+
+
+                <!-- ==================================================
+                     MEDICAL RECORDS
+                     ================================================== -->
+
+                <div class="col-md-6 col-xl-3">
+
+
+                    <a
+                        href="{% url 'medical_record_list' pet.pet_id %}"
+                        class="pet-module-card pet-module-active d-block"
+                    >
+
+
+                        <div class="pet-module-icon health">
+                            <i class="fa-solid fa-notes-medical"></i>
+                        </div>
+
+
+                        <h3>
+                            {% trans "Medical records" %}
+                        </h3>
+
+
+                        <p>
+                            {% trans "Visits, diagnoses and treatment notes." %}
+                        </p>
+
+
+                        <span class="module-open-link">
+
+                            {% trans "Open records" %}
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </span>
+
+
+                    </a>
+
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     VACCINATIONS
+                     ================================================== -->
+
+                <div class="col-md-6 col-xl-3">
+
+
+                    <a
+                        href="{% url 'vaccination_list' pet.pet_id %}"
+                        class="pet-module-card pet-module-active d-block"
+                    >
+
+
+                        <div class="pet-module-icon vaccine">
+                            <i class="fa-solid fa-syringe"></i>
+                        </div>
+
+
+                        <h3>
+                            {% trans "Vaccinations" %}
+                        </h3>
+
+
+                        <p>
+                            {% trans "Vaccines, administered dates and future doses." %}
+                        </p>
+
+
+                        <span class="module-open-link">
+
+                            {% trans "Open vaccinations" %}
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </span>
+
+
+                    </a>
+
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     GROWTH
+                     ================================================== -->
+
+                <div class="col-md-6 col-xl-3">
+
+
+                    <a
+                        href="{% url 'growth_list' pet.pet_id %}"
+                        class="pet-module-card pet-module-active d-block"
+                    >
+
+
+                        <div class="pet-module-icon growth">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+
+
+                        <h3>
+                            {% trans "Growth" %}
+                        </h3>
+
+
+                        <p>
+                            {% trans "Weight, height and important milestones." %}
+                        </p>
+
+
+                        <span class="module-open-link">
+
+                            {% trans "View growth" %}
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </span>
+
+
+                    </a>
+
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     REMINDERS
+                     ================================================== -->
+
+                <div class="col-md-6 col-xl-3">
+
+
+                    <a
+                        href="{% url 'reminder_list' pet.pet_id %}"
+                        class="pet-module-card pet-module-active d-block"
+                    >
+
+
+                        <div class="pet-module-icon reminder">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+
+
+                        <h3>
+                            {% trans "Reminders" %}
+                        </h3>
+
+
+                        <p>
+                            {% trans "Appointments and everyday care schedules." %}
+                        </p>
+
+
+                        <span class="module-open-link">
+
+                            {% trans "View reminders" %}
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </span>
+
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+{% endblock %}

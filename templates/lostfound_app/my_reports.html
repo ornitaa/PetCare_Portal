@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Reports | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <div class="pet-page-header">
+
+        <div>
+
+            <a
+                href="{% url 'report_overview' %}"
+                class="back-link"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Lost & Found
+            </a>
+
+
+            <span class="page-kicker d-block mt-4">
+                My activity
+            </span>
+
+            <h1 class="page-title">
+                My Reports
+            </h1>
+
+            <p class="page-description">
+                Manage the lost and found reports you have created.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'report_add' %}"
+            class="pet-btn pet-btn-primary"
+        >
+            <i class="fa-solid fa-plus"></i>
+            New report
+        </a>
+
+    </div>
+
+
+    {% if reports %}
+
+        <div class="row g-4">
+
+            {% for report in reports %}
+
+                <div class="col-md-6 col-xl-4">
+
+                    <a
+                        href="{% url 'report_detail' report.report_id %}"
+                        class="lost-found-card"
+                    >
+
+                        <div class="lf-card-photo">
+
+                            {% if report.photo %}
+
+                                <img
+                                    src="{{ report.photo.url }}"
+                                    alt="Report"
+                                >
+
+                            {% else %}
+
+                                <div class="lf-photo-placeholder">
+                                    🐾
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="lf-card-body">
+
+                            <div class="lf-card-title">
+
+                                {% if report.pet %}
+                                    {{ report.pet.name }}
+                                {% else %}
+                                    {{ report.get_report_type_display }} pet
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="lf-card-location">
+
+                                <i class="fa-solid fa-location-dot"></i>
+
+                                {{ report.location }}
+
+                            </div>
+
+
+                            <div class="my-report-status-row">
+
+                                <span
+                                    class="
+                                        lf-report-type
+                                        {% if report.report_type == 'LOST' %}
+                                            lost
+                                        {% else %}
+                                            found
+                                        {% endif %}
+                                    "
+                                >
+                                    {{ report.get_report_type_display }}
+                                </span>
+
+
+                                <span
+                                    class="
+                                        lf-status
+                                        status-{{ report.report_status|lower }}
+                                    "
+                                >
+                                    {{ report.get_report_status_display }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="pet-empty-large">
+
+            <div class="pet-empty-illustration">
+                🐾
+            </div>
+
+            <h2>
+                You haven't created any reports
+            </h2>
+
+            <p>
+                Create a lost or found report whenever
+                you need help from the community.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+{% endblock %}

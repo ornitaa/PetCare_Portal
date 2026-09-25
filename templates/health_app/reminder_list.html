@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reminders | {{ pet.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <a
+        href="{% url 'pet_detail' pet.pet_id %}"
+        class="back-link"
+    >
+        <i class="fa-solid fa-arrow-left"></i>
+        {{ pet.name }}'s profile
+    </a>
+
+
+    <div class="pet-page-header mt-4">
+
+        <div>
+
+            <span class="page-kicker">
+                Everyday care
+            </span>
+
+            <h1 class="page-title">
+                {{ pet.name }}'s Reminders
+            </h1>
+
+            <p class="page-description">
+                Keep appointments, medication, grooming
+                and other care tasks organized.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'reminder_add' pet.pet_id %}"
+            class="pet-btn pet-btn-primary"
+        >
+            <i class="fa-solid fa-plus"></i>
+            Add reminder
+        </a>
+
+    </div>
+
+
+    {% if reminders %}
+
+        <div class="reminder-list">
+
+            {% for reminder in reminders %}
+
+                <div
+                    class="
+                        reminder-card reveal
+                        {% if reminder.status == 'COMPLETED' %}
+                            reminder-completed
+                        {% elif reminder.status == 'CANCELLED' %}
+                            reminder-cancelled
+                        {% endif %}
+                    "
+                >
+
+                    <div class="reminder-icon">
+
+                        {% if reminder.reminder_kind == "VET_APPOINTMENT" %}
+                            <i class="fa-solid fa-user-doctor"></i>
+
+                        {% elif reminder.reminder_kind == "MEDICATION" %}
+                            <i class="fa-solid fa-pills"></i>
+
+                        {% elif reminder.reminder_kind == "VACCINATION" %}
+                            <i class="fa-solid fa-syringe"></i>
+
+                        {% elif reminder.reminder_kind == "GROOMING" %}
+                            <i class="fa-solid fa-scissors"></i>
+
+                        {% elif reminder.reminder_kind == "FEEDING" %}
+                            <i class="fa-solid fa-bowl-food"></i>
+
+                        {% else %}
+                            <i class="fa-solid fa-bell"></i>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="reminder-main">
+
+                        <div class="reminder-heading">
+
+                            <div>
+
+                                <span class="reminder-kind">
+                                    {{ reminder.get_reminder_kind_display }}
+                                </span>
+
+                                <h3>
+                                    {{ reminder.title }}
+                                </h3>
+
+                            </div>
+
+
+                            <span
+                                class="
+                                    reminder-status
+                                    status-{{ reminder.status|lower }}
+                                "
+                            >
+                                {{ reminder.get_status_display }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="reminder-time">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            {{ reminder.remind_at|date:"M d, Y" }}
+
+                            <span>·</span>
+
+                            <i class="fa-regular fa-clock"></i>
+
+                            {{ reminder.remind_at|date:"g:i A" }}
+
+                        </div>
+
+
+                        {% if reminder.details %}
+
+                            <p>
+                                {{ reminder.details }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <div class="reminder-actions">
+
+                            {% if reminder.status == "PENDING" %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'reminder_complete' pet.pet_id reminder.reminder_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="reminder-action complete"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                        Complete
+                                    </button>
+                                </form>
+
+
+                                <a
+                                    href="{% url 'reminder_edit' pet.pet_id reminder.reminder_id %}"
+                                    class="reminder-action edit"
+                                >
+                                    <i class="fa-solid fa-pen"></i>
+                                    Edit
+                                </a>
+
+
+                                <form
+                                    method="post"
+                                    action="{% url 'reminder_cancel' pet.pet_id reminder.reminder_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="reminder-action cancel"
+                                    >
+                                        Cancel
+                                    </button>
+                                </form>
+
+
+                            {% else %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'reminder_reopen' pet.pet_id reminder.reminder_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="reminder-action edit"
+                                    >
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                        Reopen
+                                    </button>
+                                </form>
+
+                            {% endif %}
+
+
+                            <a
+                                href="{% url 'reminder_delete' pet.pet_id reminder.reminder_id %}"
+                                class="reminder-action delete"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="pet-empty-large reveal">
+
+            <div class="pet-empty-illustration">
+                🔔
+            </div>
+
+            <span class="page-kicker">
+                Care schedule
+            </span>
+
+            <h2>
+                No reminders yet
+            </h2>
+
+            <p>
+                Add a reminder for appointments,
+                medication, grooming or everyday care.
+            </p>
+
+            <a
+                href="{% url 'reminder_add' pet.pet_id %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Add first reminder
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+{% endblock %}

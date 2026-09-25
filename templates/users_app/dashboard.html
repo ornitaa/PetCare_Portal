@@ -1,0 +1,694 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dashboard" %} | PetCare Portal{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+    <div class="container">
+
+
+        <!-- ==================================================
+             WELCOME
+             ================================================== -->
+
+        <div class="welcome-panel reveal">
+
+            <div class="welcome-kicker">
+                {% trans "Your PetCare home" %}
+            </div>
+
+            <h1 class="welcome-title">
+                {% blocktrans with name=request.user.full_name %}Hi, {{ name }} 👋{% endblocktrans %}
+            </h1>
+
+            <p class="welcome-text">
+                {% trans "Everything important about your pets, all organized in one place." %}
+            </p>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             DASHBOARD STATISTICS
+             ================================================== -->
+
+        <div class="row g-4">
+
+            <!-- MY PETS -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="stat-card reveal">
+
+                    <div class="stat-icon icon-green">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        {{ pet_count }}
+                    </div>
+
+                    <p class="stat-label">
+                        {% trans "My pets" %}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- UPCOMING VACCINES -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="stat-card reveal">
+
+                    <div class="stat-icon icon-gold">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        {{ upcoming_vaccine_count }}
+                    </div>
+
+                    <p class="stat-label">
+                        {% trans "Upcoming vaccines" %}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CARE REMINDERS -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="stat-card reveal">
+
+                    <div class="stat-icon icon-orange">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        {{ care_reminder_count }}
+                    </div>
+
+                    <p class="stat-label">
+                        {% trans "Care reminders" %}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMMUNITY POSTS -->
+
+            <div class="col-sm-6 col-xl-3">
+
+                <div class="stat-card reveal">
+
+                    <div class="stat-icon icon-sage">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+
+                    <div class="stat-number">
+                        {{ my_post_count }}
+                    </div>
+
+                    <p class="stat-label">
+                        {% trans "My community posts" %}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             QUICK ACTIONS
+             ================================================== -->
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title mb-0">
+                        {% trans "Quick actions" %}
+                    </h2>
+
+                    <p class="section-text">
+                        {% trans "Useful things you’ll use often." %}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-4">
+
+
+                <!-- ADD PET -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <a
+                        href="{% url 'pet_add' %}"
+                        class="action-card reveal d-block h-100"
+                    >
+
+                        <div class="action-icon">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+
+                        <div class="action-title">
+                            {% trans "Add a pet" %}
+                        </div>
+
+                        <p class="action-desc">
+                            {% trans "Create a new pet profile." %}
+                        </p>
+
+                    </a>
+
+                </div>
+
+
+                <!-- VACCINATIONS -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <a
+                        href="{% url 'vaccination_overview' %}"
+                        class="action-card reveal d-block h-100"
+                    >
+
+                        <div class="action-icon">
+                            <i class="fa-solid fa-syringe"></i>
+                        </div>
+
+                        <div class="action-title">
+                            {% trans "Vaccinations" %}
+                        </div>
+
+                        <p class="action-desc">
+                            {% trans "View upcoming, overdue and past vaccine records." %}
+                        </p>
+
+                    </a>
+
+                </div>
+
+
+                <!-- REMINDERS -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <a
+                        href="{% url 'reminder_overview' %}"
+                        class="action-card reveal d-block h-100"
+                    >
+
+                        <div class="action-icon">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+
+                        <div class="action-title">
+                            {% trans "Reminders" %}
+                        </div>
+
+                        <p class="action-desc">
+                            {% trans "View upcoming and overdue pet-care tasks." %}
+                        </p>
+
+                    </a>
+
+                </div>
+
+
+                <!-- LOST & FOUND -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <a
+                        href="{% url 'report_overview' %}"
+                        class="action-card reveal d-block h-100"
+                    >
+
+                        <div class="action-icon">
+                            <i class="fa-solid fa-shield-heart"></i>
+                        </div>
+
+                        <div class="action-title">
+                            {% trans "Lost & Found" %}
+                        </div>
+
+                        <p class="action-desc">
+                            {% trans "Report missing pets and help found pets get home." %}
+                        </p>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             MY PETS
+             ================================================== -->
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title mb-0">
+                        {% trans "My pets" %}
+                    </h2>
+
+                    <p class="section-text">
+                        {% trans "Your companions and their profiles." %}
+                    </p>
+
+                </div>
+
+
+                <div class="d-flex align-items-center flex-wrap gap-2">
+
+                    <span class="pet-chip">
+                        {% blocktrans count count=pet_count %}{{ count }} pet{% plural %}{{ count }} pets{% endblocktrans %}
+                    </span>
+
+                    <a
+                        href="{% url 'pet_list' %}"
+                        class="pet-btn pet-btn-secondary"
+                    >
+                        {% trans "View all pets" %}
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            {% if pets %}
+
+                <div class="row g-4">
+
+                    {% for pet in pets %}
+
+                        <div class="col-sm-6 col-xl-3">
+
+                            <a
+                                href="{% url 'pet_detail' pet.pet_id %}"
+                                class="pet-card reveal d-block h-100"
+                            >
+
+                                <div class="pet-img-wrap">
+
+                                    {% if pet.photo %}
+
+                                        <img
+                                            src="{{ pet.photo.url }}"
+                                            alt="{{ pet.name }}"
+                                        >
+
+                                    {% else %}
+
+                                        <div class="pet-placeholder">
+
+                                            {% if pet.species|lower == "cat" %}
+
+                                                🐱
+
+                                            {% elif pet.species|lower == "dog" %}
+
+                                                🐶
+
+                                            {% else %}
+
+                                                🐾
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="pet-card-body">
+
+                                    <div class="pet-name">
+                                        {{ pet.name }}
+                                    </div>
+
+                                    <div class="pet-meta">
+
+                                        {{ pet.species }}
+
+                                        {% if pet.breed %}
+                                            · {{ pet.breed }}
+                                        {% endif %}
+
+                                    </div>
+
+                                    <span class="pet-chip">
+                                        {{ pet.get_sex_display }}
+                                    </span>
+
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="empty-box reveal">
+
+                    <div class="empty-icon">
+                        🐾
+                    </div>
+
+                    <h3 class="empty-title">
+                        {% trans "No pets added yet" %}
+                    </h3>
+
+                    <p class="empty-text">
+                        {% trans "Add your first pet profile to start tracking health, reminders and all important care details." %}
+                    </p>
+
+                    <a
+                        href="{% url 'pet_add' %}"
+                        class="pet-btn pet-btn-primary"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        {% trans "Add first pet" %}
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+        <!-- ==================================================
+        COMMUNITY + ADOPTION
+        ================================================== -->
+
+        <div class="section-block dashboard-discovery-section">
+
+        <div class="row g-4">
+
+
+         <!-- COMMUNITY -->
+
+        <div class="col-xl-6">
+
+            <div class="dashboard-feature-panel reveal">
+
+                <div class="dashboard-feature-header">
+
+                    <div>
+
+                        <span class="page-kicker">
+                            {% trans "Community" %}
+                        </span>
+
+                        <h2>
+                            {% trans "Latest discussions" %}
+                        </h2>
+
+                        <p>
+                            {% trans "Questions, stories and experiences from pet owners." %}
+                        </p>
+
+                    </div>
+
+
+                    <div class="dashboard-feature-icon">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+
+                </div>
+
+
+                {% if latest_community_posts %}
+
+                    <div class="dashboard-discussion-list">
+
+                        {% for post in latest_community_posts %}
+
+                            <a
+                                href="{% url 'community_post_detail' post.post_id %}"
+                                class="dashboard-discussion"
+                            >
+
+                                <div class="dashboard-mini-avatar">
+                                    {{ post.author.full_name|first|upper }}
+                                </div>
+
+
+                                <div class="dashboard-discussion-content">
+
+                                    <h3>
+                                        {{ post.title }}
+                                    </h3>
+
+                                    <p>
+                                        {{ post.body|truncatechars:95 }}
+                                    </p>
+
+                                    <span>
+                                        {{ post.author.full_name }}
+                                        ·
+                                        {% blocktrans with elapsed=post.created_at|timesince %}{{ elapsed }} ago{% endblocktrans %}
+                                    </span>
+
+                                </div>
+
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                {% else %}
+
+                    <div class="dashboard-mini-empty">
+
+                        <i class="fa-regular fa-comments"></i>
+
+                        <div>
+
+                            <strong>
+                                {% trans "No discussions yet" %}
+                            </strong>
+
+                            <p>
+                                {% trans "Community discussions will appear here." %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <div class="dashboard-feature-footer">
+
+                    <a
+                        href="{% url 'community_feed' %}"
+                        class="pet-btn pet-btn-secondary"
+                    >
+                        {% trans "Explore Community" %}
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ADOPTION -->
+
+        <div class="col-xl-6">
+
+            <div class="dashboard-feature-panel reveal">
+
+                <div class="dashboard-feature-header">
+
+                    <div>
+
+                        <span class="page-kicker">
+                            {% trans "Adoption" %}
+                        </span>
+
+                        <h2>
+                            {% trans "Pets looking for homes" %}
+                        </h2>
+
+                        <p>
+                            {% trans "Meet pets currently available for adoption." %}
+                        </p>
+
+                    </div>
+
+
+                    <div class="dashboard-feature-icon adoption">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+
+                </div>
+
+
+                {% if latest_adoption_listings %}
+
+                    <div class="dashboard-adoption-list">
+
+                        {% for listing in latest_adoption_listings %}
+
+                            <a
+                                href="{% url 'adoption_detail' listing.listing_id %}"
+                                class="dashboard-adoption-item"
+                            >
+
+                                <div class="dashboard-adoption-photo">
+
+                                    {% if listing.pet.photo %}
+
+                                        <img
+                                            src="{{ listing.pet.photo.url }}"
+                                            alt="{{ listing.pet.name }}"
+                                        >
+
+                                    {% else %}
+
+                                        {% if listing.pet.species|lower == "cat" %}
+                                            🐱
+                                        {% elif listing.pet.species|lower == "dog" %}
+                                            🐶
+                                        {% else %}
+                                            🐾
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="dashboard-adoption-info">
+
+                                    <h3>
+                                        {{ listing.pet.name }}
+                                    </h3>
+
+                                    <p>
+
+                                        {{ listing.pet.species }}
+
+                                        {% if listing.pet.breed %}
+                                            · {{ listing.pet.breed }}
+                                        {% endif %}
+
+                                    </p>
+
+                                    <span>
+
+                                        <i class="fa-solid fa-location-dot"></i>
+
+                                        {{ listing.location }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                {% else %}
+
+                    <div class="dashboard-mini-empty">
+
+                        <i class="fa-solid fa-house"></i>
+
+                        <div>
+
+                            <strong>
+                                {% trans "No active adoption listings" %}
+                            </strong>
+
+                            <p>
+                                {% trans "Available pets will appear here." %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <div class="dashboard-feature-footer">
+
+                    <a
+                        href="{% url 'adoption_browse' %}"
+                        class="pet-btn pet-btn-secondary"
+                    >
+                        {% trans "Explore Adoption" %}
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                 </div>
+
+             </div>
+
+         </div>
+
+        </div>
+
+    </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

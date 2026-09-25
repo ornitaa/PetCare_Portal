@@ -1,0 +1,483 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reminder Notifications | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+        <a
+            href="{% url 'reminder_overview' %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Care Reminders
+        </a>
+
+
+        <div class="notification-settings-card reveal">
+
+            <div class="notification-settings-icon">
+                <i class="fa-regular fa-bell"></i>
+            </div>
+
+
+            <span class="page-kicker">
+                Reminder alerts
+            </span>
+
+
+            <h1>
+                Browser Notifications
+            </h1>
+
+
+            <p>
+                Enable notifications to receive
+                PetCare care reminders even when
+                the PetCare Portal tab is closed.
+            </p>
+
+
+            <div
+                id="notificationStatus"
+                class="notification-status"
+            >
+                Checking notification status...
+            </div>
+
+
+            <button
+                type="button"
+                id="enablePushNotifications"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-regular fa-bell"></i>
+                Enable notifications
+            </button>
+
+
+            <button
+                type="button"
+                id="disablePushNotifications"
+                class="pet-btn pet-btn-secondary"
+                hidden
+            >
+                <i class="fa-solid fa-bell-slash"></i>
+                Disable notifications
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+import {
+    getMessaging,
+    isSupported,
+    onRegistered,
+    onUnregistered,
+    register,
+    unregister
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
+
+
+
+const firebaseConfig = {
+
+    apiKey:
+        "{{ firebase_api_key|escapejs }}",
+
+    authDomain:
+        "{{ firebase_auth_domain|escapejs }}",
+
+    projectId:
+        "{{ firebase_project_id|escapejs }}",
+
+    storageBucket:
+        "{{ firebase_storage_bucket|escapejs }}",
+
+    messagingSenderId:
+        "{{ firebase_messaging_sender_id|escapejs }}",
+
+    appId:
+        "{{ firebase_app_id|escapejs }}"
+};
+
+
+const vapidKey =
+    "{{ firebase_vapid_key|escapejs }}";
+
+
+const enableButton =
+    document.getElementById(
+        "enablePushNotifications"
+    );
+
+
+const disableButton =
+    document.getElementById(
+        "disablePushNotifications"
+    );
+
+
+const statusBox =
+    document.getElementById(
+        "notificationStatus"
+    );
+
+
+
+function getCookie(name) {
+
+    let cookieValue = null;
+
+    if (
+        document.cookie &&
+        document.cookie !== ""
+    ) {
+
+        const cookies =
+            document.cookie.split(";");
+
+
+        for (
+            const cookieText of cookies
+        ) {
+
+            const cookie =
+                cookieText.trim();
+
+
+            if (
+                cookie.startsWith(
+                    name + "="
+                )
+            ) {
+
+                cookieValue =
+                    decodeURIComponent(
+                        cookie.substring(
+                            name.length + 1
+                        )
+                    );
+
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+
+const csrfToken =
+    getCookie("csrftoken");
+
+
+
+async function saveFID(fid) {
+
+    const response =
+        await fetch(
+            "{% url 'register_push_device' %}",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "X-CSRFToken":
+                        csrfToken
+                },
+
+                credentials:
+                    "same-origin",
+
+                body:
+                    JSON.stringify({
+                        fid: fid,
+
+                        device_name:
+                            navigator.userAgent
+                                .substring(
+                                    0,
+                                    120
+                                )
+                    })
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Could not save browser registration."
+        );
+    }
+}
+
+
+
+async function disableFID(fid) {
+
+    await fetch(
+        "{% url 'unregister_push_device' %}",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json",
+
+                "X-CSRFToken":
+                    csrfToken
+            },
+
+            credentials:
+                "same-origin",
+
+            body:
+                JSON.stringify({
+                    fid: fid
+                })
+        }
+    );
+}
+
+
+
+async function startNotifications() {
+
+    const supported =
+        await isSupported();
+
+
+    if (!supported) {
+
+        statusBox.textContent =
+            "This browser does not support "
+            + "Firebase web notifications.";
+
+        enableButton.disabled = true;
+
+        return;
+    }
+
+
+    if (
+        Notification.permission === "denied"
+    ) {
+
+        statusBox.textContent =
+            "Notifications are blocked in "
+            + "your browser settings.";
+
+        enableButton.disabled = true;
+
+        return;
+    }
+
+
+    const firebaseApp =
+        initializeApp(
+            firebaseConfig
+        );
+
+
+    const messaging =
+        getMessaging(
+            firebaseApp
+        );
+
+
+    const serviceWorkerRegistration =
+        await navigator.serviceWorker.register(
+            "/firebase-messaging-sw.js"
+        );
+
+
+
+    onRegistered(
+        messaging,
+        async function (fid) {
+
+            console.log(
+                "Firebase Installation ID:",
+                fid
+            );
+
+
+            await saveFID(fid);
+
+
+            window.petcareCurrentFID =
+                fid;
+
+
+            statusBox.textContent =
+                "Notifications are enabled.";
+
+
+            enableButton.hidden = true;
+
+            disableButton.hidden = false;
+        }
+    );
+
+
+
+    onUnregistered(
+        messaging,
+        async function (fid) {
+
+            await disableFID(fid);
+
+
+            statusBox.textContent =
+                "Notifications are disabled.";
+
+
+            enableButton.hidden = false;
+
+            disableButton.hidden = true;
+        }
+    );
+
+    enableButton.addEventListener(
+        "click",
+        async function () {
+
+            const permission =
+                await Notification
+                    .requestPermission();
+
+
+            if (
+                permission !== "granted"
+            ) {
+
+                statusBox.textContent =
+                    "Notification permission "
+                    + "was not granted.";
+
+                return;
+            }
+
+
+            statusBox.textContent =
+                "Registering this browser...";
+
+
+            try {
+
+                await register(
+                    messaging,
+                    {
+                        vapidKey:
+                            vapidKey,
+
+                        serviceWorkerRegistration:
+                            serviceWorkerRegistration
+                    }
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                statusBox.textContent =
+                    "Could not enable notifications.";
+            }
+
+        }
+    );
+
+
+
+    disableButton.addEventListener(
+        "click",
+        async function () {
+
+            try {
+
+                await unregister(
+                    messaging
+                );
+
+
+                statusBox.textContent =
+                    "Notifications are disabled.";
+
+
+                enableButton.hidden = false;
+
+                disableButton.hidden = true;
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                statusBox.textContent =
+                    "Could not disable notifications.";
+            }
+
+        }
+    );
+
+
+
+    if (
+        Notification.permission
+        === "granted"
+    ) {
+
+        statusBox.textContent =
+            "Synchronizing notification registration...";
+
+
+        await register(
+            messaging,
+            {
+                vapidKey:
+                    vapidKey,
+
+                serviceWorkerRegistration:
+                    serviceWorkerRegistration
+            }
+        );
+
+    }
+
+    else {
+
+        statusBox.textContent =
+            "Notifications are currently disabled.";
+    }
+}
+
+
+startNotifications();
+
+</script>
+
+{% endblock %}

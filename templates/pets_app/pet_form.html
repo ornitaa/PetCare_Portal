@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate page_title %} | PetCare Portal{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10">
+
+                <div class="pet-form-shell reveal">
+
+                    <div class="row g-0">
+
+
+                        <!-- ==================================================
+                             LEFT VISUAL
+                             ================================================== -->
+
+                        <div class="col-lg-5">
+
+                            <div class="pet-form-visual">
+
+
+                                <span class="page-kicker">
+                                    {% trans "Pet profile" %}
+                                </span>
+
+
+                                <h2 class="pet-form-visual-title">
+                                    {% translate page_title %}
+                                </h2>
+
+
+                                <p>
+                                    {% trans "Add the basic information that helps identify and care for your pet." %}
+                                </p>
+
+
+
+                                <div class="pet-photo-preview">
+
+
+                                    {% if pet and pet.photo %}
+
+                                        <img
+                                            id="photoPreview"
+                                            src="{{ pet.photo.url }}"
+                                            alt="{{ pet.name }}"
+                                        >
+
+
+                                        <div
+                                            id="photoPlaceholder"
+                                            class="photo-placeholder d-none"
+                                        >
+                                            🐾
+                                        </div>
+
+
+                                    {% else %}
+
+                                        {% trans "Pet preview" as pet_preview_text %}
+
+                                        <img
+                                            id="photoPreview"
+                                            src=""
+                                            alt="{{ pet_preview_text }}"
+                                            class="d-none"
+                                        >
+
+
+                                        <div
+                                            id="photoPlaceholder"
+                                            class="photo-placeholder"
+                                        >
+                                            🐾
+                                        </div>
+
+                                    {% endif %}
+
+
+                                </div>
+
+
+
+                                <div class="pet-form-tip">
+
+                                    <i class="fa-solid fa-camera"></i>
+
+
+                                    <div>
+
+                                        <strong>
+                                            {% trans "Add a clear photo" %}
+                                        </strong>
+
+
+                                        <small>
+                                            {% trans "It makes the pet profile easier to recognize." %}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             FORM
+                             ================================================== -->
+
+                        <div class="col-lg-7">
+
+                            <div class="pet-form-area">
+
+
+                                <a
+                                    href="{% url 'pet_list' %}"
+                                    class="back-link"
+                                >
+                                    <i class="fa-solid fa-arrow-left"></i>
+
+                                    {% trans "Back to My Pets" %}
+                                </a>
+
+
+
+                                <h1 class="pet-form-title">
+                                    {% translate page_title %}
+                                </h1>
+
+
+                                <p class="text-muted mb-4">
+                                    {% trans "Fields marked as required need to be completed before saving." %}
+                                </p>
+
+
+
+                                <form
+                                    method="post"
+                                    enctype="multipart/form-data"
+                                >
+
+                                    {% csrf_token %}
+
+
+
+                                    {% if form.non_field_errors %}
+
+                                        <div class="alert alert-danger pet-alert">
+
+                                            {% for error in form.non_field_errors %}
+
+                                                {{ error }}
+
+                                            {% endfor %}
+
+                                        </div>
+
+                                    {% endif %}
+
+
+
+                                    <div class="row g-3">
+
+
+                                        <!-- PET NAME -->
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                class="form-label"
+                                                for="{{ form.name.id_for_label }}"
+                                            >
+                                                {% trans "Pet name" %}
+                                            </label>
+
+
+                                            {{ form.name }}
+
+
+                                            {% for error in form.name.errors %}
+
+                                                <div class="form-error">
+                                                    {{ error }}
+                                                </div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+
+
+                                        <!-- SPECIES -->
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                class="form-label"
+                                                for="{{ form.species.id_for_label }}"
+                                            >
+                                                {% trans "Species" %}
+                                            </label>
+
+
+                                            {{ form.species }}
+
+
+                                            {% for error in form.species.errors %}
+
+                                                <div class="form-error">
+                                                    {{ error }}
+                                                </div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+
+
+                                        <!-- BREED -->
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                class="form-label"
+                                                for="{{ form.breed.id_for_label }}"
+                                            >
+                                                {% trans "Breed" %}
+                                            </label>
+
+
+                                            {{ form.breed }}
+
+
+                                            {% for error in form.breed.errors %}
+
+                                                <div class="form-error">
+                                                    {{ error }}
+                                                </div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+
+
+                                        <!-- SEX -->
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                class="form-label"
+                                                for="{{ form.sex.id_for_label }}"
+                                            >
+                                                {% trans "Sex" %}
+                                            </label>
+
+
+                                            {{ form.sex }}
+
+
+                                            {% for error in form.sex.errors %}
+
+                                                <div class="form-error">
+                                                    {{ error }}
+                                                </div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+
+
+                                        <!-- BIRTH DATE -->
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                class="form-label"
+                                                for="{{ form.birth_date.id_for_label }}"
+                                            >
+                                                {% trans "Birth date" %}
+                                            </label>
+
+
+                                            {{ form.birth_date }}
+
+
+                                            {% for error in form.birth_date.errors %}
+
+                                                <div class="form-error">
+                                                    {{ error }}
+                                                </div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+
+
+                                        <!-- PHOTO -->
+
+                                        <div class="col-md-6">
+
+                                            <label
+                                                class="form-label"
+                                                for="{{ form.photo.id_for_label }}"
+                                            >
+                                                {% trans "Pet photo" %}
+                                            </label>
+
+
+                                            {{ form.photo }}
+
+
+                                            {% for error in form.photo.errors %}
+
+                                                <div class="form-error">
+                                                    {{ error }}
+                                                </div>
+
+                                            {% endfor %}
+
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <!-- FORM ACTIONS -->
+
+                                    <div class="pet-form-actions">
+
+
+                                        <a
+                                            href="{% url 'pet_list' %}"
+                                            class="pet-btn pet-btn-secondary"
+                                        >
+                                            {% trans "Cancel" %}
+                                        </a>
+
+
+                                        <button
+                                            type="submit"
+                                            class="pet-btn pet-btn-primary"
+                                        >
+
+                                            <i class="fa-solid fa-check me-2"></i>
+
+                                            {% translate button_text %}
+
+                                        </button>
+
+
+                                    </div>
+
+
+                                </form>
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const photoInput =
+        document.getElementById("{{ form.photo.id_for_label }}");
+
+    const preview =
+        document.getElementById("photoPreview");
+
+    const placeholder =
+        document.getElementById("photoPlaceholder");
+
+
+    if (!photoInput) {
+        return;
+    }
+
+
+    photoInput.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+
+        if (!file) {
+            return;
+        }
+
+
+        if (!file.type.startsWith("image/")) {
+            return;
+        }
+
+
+        const reader = new FileReader();
+
+
+        reader.onload = function (event) {
+
+            preview.src = event.target.result;
+
+            preview.classList.remove("d-none");
+
+            placeholder.classList.add("d-none");
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

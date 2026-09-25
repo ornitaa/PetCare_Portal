@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pet.name }}'s Medical Records | PetCare{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+    <div class="container">
+
+        <a
+            href="{% url 'pet_detail' pet.pet_id %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            {{ pet.name }}'s profile
+        </a>
+
+
+        <div class="pet-page-header mt-4">
+
+            <div>
+                <span class="page-kicker">
+                    Health history
+                </span>
+
+                <h1 class="page-title">
+                    Medical Records
+                </h1>
+
+                <p class="page-description">
+                    Keep {{ pet.name }}'s checkups, illnesses,
+                    diagnoses and treatment history together.
+                </p>
+            </div>
+
+
+            <div class="action-group">
+
+                <a
+                    href="{% url 'medical_record_add' pet.pet_id %}"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    Add record
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {% if records %}
+
+            <div class="health-timeline">
+
+                {% for record in records %}
+
+                    <a
+                        href="{% url 'medical_record_detail' pet.pet_id record.record_id %}"
+                        class="medical-record-card reveal"
+                    >
+
+                        <div class="record-date-box">
+
+                            <span>
+                                {{ record.recorded_on|date:"d" }}
+                            </span>
+
+                            <small>
+                                {{ record.recorded_on|date:"M Y" }}
+                            </small>
+
+                        </div>
+
+
+                        <div class="record-main">
+
+                            <div class="record-top-row">
+
+                                <span class="record-kind">
+                                    {{ record.get_record_kind_display }}
+                                </span>
+
+                                {% if record.medications.count %}
+                                    <span class="record-medication-count">
+                                        <i class="fa-solid fa-pills"></i>
+                                        {{ record.medications.count }}
+                                    </span>
+                                {% endif %}
+
+                            </div>
+
+
+                            <h3>
+                                {% if record.diagnosis %}
+                                    {{ record.diagnosis|truncatechars:70 }}
+                                {% else %}
+                                    {{ record.get_record_kind_display }}
+                                {% endif %}
+                            </h3>
+
+
+                            <p>
+                                {% if record.care_notes %}
+                                    {{ record.care_notes|truncatechars:130 }}
+                                {% else %}
+                                    No additional care notes.
+                                {% endif %}
+                            </p>
+
+
+                            {% if record.vet_name %}
+                                <div class="record-vet">
+                                    <i class="fa-solid fa-user-doctor"></i>
+                                    {{ record.vet_name }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="record-arrow">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="pet-empty-large reveal">
+
+                <div class="pet-empty-illustration">
+                    🩺
+                </div>
+
+                <span class="page-kicker">
+                    Health history
+                </span>
+
+                <h2>
+                    No medical records yet
+                </h2>
+
+                <p>
+                    Add {{ pet.name }}'s first medical entry to
+                    begin building an organized health history.
+                </p>
+
+                <a
+                    href="{% url 'medical_record_add' pet.pet_id %}"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    Add first record
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

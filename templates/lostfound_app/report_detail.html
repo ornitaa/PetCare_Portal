@@ -1,0 +1,544 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lost & Found Report | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+        <!-- BACK -->
+
+        <a
+            href="{% url 'report_overview' %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Lost &amp; Found
+        </a>
+
+
+        <!-- REPORT DETAIL -->
+
+        <div class="lf-detail-card reveal">
+
+            <div class="row g-4 align-items-start">
+
+
+                <!-- PHOTO -->
+
+                <div class="col-lg-5">
+
+                    <div class="lf-detail-photo">
+
+                        {% if report.photo %}
+
+                            <img
+                                src="{{ report.photo.url }}"
+                                alt="Report photo"
+                            >
+
+                        {% elif report.pet and report.pet.photo %}
+
+                            <img
+                                src="{{ report.pet.photo.url }}"
+                                alt="{{ report.pet.name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="lf-photo-placeholder large">
+                                🐾
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- INFORMATION -->
+
+                <div class="col-lg-7">
+
+
+                    <!-- STATUS -->
+
+                    <div class="lf-detail-top">
+
+                        <span
+                            class="
+                                lf-report-type
+                                {% if report.report_type == 'LOST' %}
+                                    lost
+                                {% else %}
+                                    found
+                                {% endif %}
+                            "
+                        >
+                            {{ report.get_report_type_display }}
+                        </span>
+
+
+                        <span
+                            class="
+                                lf-status
+                                status-{{ report.report_status|lower }}
+                            "
+                        >
+                            {{ report.get_report_status_display }}
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- PET NAME -->
+
+                    <h1 class="lf-detail-title">
+
+                        {% if report.pet %}
+
+                            {{ report.pet.name }}
+
+                        {% elif report.report_type == "FOUND" %}
+
+                            Found pet
+
+                        {% else %}
+
+                            Lost pet
+
+                        {% endif %}
+
+                    </h1>
+
+
+
+                    <!-- PET INFORMATION -->
+
+                    {% if report.pet %}
+
+                        <p class="lf-pet-meta">
+
+                            {{ report.pet.species }}
+
+                            {% if report.pet.breed %}
+                                · {{ report.pet.breed }}
+                            {% endif %}
+
+                        </p>
+
+                    {% endif %}
+
+
+
+                    <!-- REPORT INFORMATION -->
+
+                    <div class="lf-detail-info">
+
+
+                        <!-- LOCATION -->
+
+                        <div>
+
+                            <span>
+                                <i class="fa-solid fa-location-dot"></i>
+                                Location
+                            </span>
+
+                            <strong>
+                                {{ report.location }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- INCIDENT -->
+
+                        <div>
+
+                            <span>
+                                <i class="fa-regular fa-clock"></i>
+                                Incident
+                            </span>
+
+                            <strong>
+
+                                {% if report.incident_at %}
+
+                                    {{ report.incident_at|date:"M d, Y · g:i A" }}
+
+                                {% else %}
+
+                                    Not specified
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- REPORTER -->
+
+                        <div>
+
+                            <span>
+                                <i class="fa-regular fa-user"></i>
+                                Reported by
+                            </span>
+
+                            <strong>
+                                {{ report.reporter.full_name }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- POSTED -->
+
+                        <div>
+
+                            <span>
+                                <i class="fa-regular fa-calendar"></i>
+                                Posted
+                            </span>
+
+                            <strong>
+                                {{ report.created_at|date:"M d, Y" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="lf-description">
+
+                        <h3>
+                            Description
+                        </h3>
+
+                        <p>
+                            {{ report.description|linebreaksbr }}
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         CONTACT REPORTER
+                         Only visible to other users
+                         ================================================== -->
+
+                    {% if report.reporter != request.user %}
+
+                        <div class="contact-action-box lost-found-contact">
+
+                            <div class="contact-action-icon">
+
+                                <i class="fa-solid fa-address-card"></i>
+
+                            </div>
+
+
+                            <div class="contact-action-content">
+
+                                <span class="page-kicker">
+                                    Have useful information?
+                                </span>
+
+                                <h3>
+                                    Contact the reporter
+                                </h3>
+
+                                <p>
+                                    If you recognize this pet or have
+                                    information that could help, contact
+                                    {{ report.reporter.full_name }}.
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="pet-btn pet-btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reporterContactModal"
+                            >
+                                <i class="fa-solid fa-envelope"></i>
+                                Contact reporter
+                            </button>
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- ==================================================
+                         OWNER ACTIONS
+                         Only visible to reporter
+                         ================================================== -->
+
+                    {% if report.reporter == request.user %}
+
+                        <div class="lf-owner-actions">
+
+
+                            {% if report.report_status == "OPEN" %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'report_resolve' report.report_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="pet-btn pet-btn-primary"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                        Mark resolved
+                                    </button>
+
+                                </form>
+
+
+                            {% else %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'report_reopen' report.report_id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="pet-btn pet-btn-primary"
+                                    >
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                        Reopen report
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+
+
+                            <!-- EDIT -->
+
+                            <a
+                                href="{% url 'report_edit' report.report_id %}"
+                                class="pet-btn pet-btn-secondary"
+                            >
+                                <i class="fa-solid fa-pen"></i>
+                                Edit
+                            </a>
+
+
+
+                            <!-- DELETE -->
+
+                            <a
+                                href="{% url 'report_delete' report.report_id %}"
+                                class="lf-delete-button"
+                                title="Delete report"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==========================================================
+     CONTACT REPORTER MODAL
+     ========================================================== -->
+
+{% if report.reporter != request.user %}
+
+<div
+    class="modal fade pet-contact-modal"
+    id="reporterContactModal"
+    tabindex="-1"
+    aria-labelledby="reporterContactModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <span class="page-kicker">
+                        Lost &amp; Found Contact
+                    </span>
+
+                    <h2
+                        class="modal-title"
+                        id="reporterContactModalLabel"
+                    >
+                        Reporter Information
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <!-- REPORTER -->
+
+                <div class="contact-person-card">
+
+                    <div class="contact-person-avatar">
+                        {{ report.reporter.full_name|first|upper }}
+                    </div>
+
+                    <div class="contact-person-info">
+
+                        <strong>
+                            {{ report.reporter.full_name }}
+                        </strong>
+
+                        <span>
+                            {{ report.get_report_type_display }}
+                            report #{{ report.report_id }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTACT INFORMATION -->
+
+                <div class="contact-info-clean">
+
+                    <div class="contact-info-row">
+
+                        <div class="contact-info-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+
+                        <div>
+
+                            <span class="contact-info-label">
+                                Email
+                            </span>
+
+                            <div class="contact-info-value">
+                                {{ report.reporter.email }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if report.reporter.phone %}
+
+                        <div class="contact-info-row">
+
+                            <div class="contact-info-icon">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+
+                            <div>
+
+                                <span class="contact-info-label">
+                                    Phone
+                                </span>
+
+                                <div class="contact-info-value">
+                                    {{ report.reporter.phone }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="contact-info-row">
+
+                        <div class="contact-info-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+
+                        <div>
+
+                            <span class="contact-info-label">
+                                Report location
+                            </span>
+
+                            <div class="contact-info-value">
+                                {{ report.location }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="contact-privacy-box">
+
+                    <i class="fa-solid fa-shield-heart"></i>
+
+                    <p>
+                        Contact information is visible only to
+                        logged-in PetCare Portal users.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

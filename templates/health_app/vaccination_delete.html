@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}
+Delete Vaccination | PetCare
+{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-6">
+
+    <div class="delete-card reveal">
+
+        <div class="delete-icon">
+            <i class="fa-solid fa-syringe"></i>
+        </div>
+
+        <span class="page-kicker">
+            Vaccination
+        </span>
+
+        <h1>
+            Remove this vaccination?
+        </h1>
+
+        <p>
+            <strong>
+                {{ vaccination.vaccine_name }}
+            </strong>
+
+            will be removed from
+            {{ pet.name }}'s vaccination history.
+        </p>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="delete-actions">
+
+                <a
+                    href="{% url 'vaccination_list' pet.pet_id %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    Keep record
+                </a>
+
+                <button
+                    type="submit"
+                    class="danger-button"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                    Delete vaccination
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lost & Found | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Pet safety network
+            </span>
+
+            <h1 class="page-title">
+                Lost & Found
+            </h1>
+
+            <p class="page-description">
+                Help missing pets get home safely and
+                connect found pets with their families.
+            </p>
+
+        </div>
+
+
+        <div class="action-group">
+
+            <a
+                href="{% url 'my_reports' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-solid fa-folder-open"></i>
+                My reports
+            </a>
+
+
+            <a
+                href="{% url 'report_add' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Create report
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+
+            <div class="lf-summary-card lost reveal">
+
+                <div class="lf-summary-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+
+                <div>
+                    <strong>{{ lost_count }}</strong>
+                    <span>Open lost reports</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="lf-summary-card found reveal">
+
+                <div class="lf-summary-icon">
+                    <i class="fa-solid fa-paw"></i>
+                </div>
+
+                <div>
+                    <strong>{{ found_count }}</strong>
+                    <span>Open found reports</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="lf-summary-card mine reveal">
+
+                <div class="lf-summary-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div>
+                    <strong>{{ my_open_count }}</strong>
+                    <span>My open reports</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORT BUTTONS -->
+
+    <div class="lost-found-choice reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Need help?
+            </span>
+
+            <h2>
+                What happened?
+            </h2>
+
+            <p>
+                Start the right type of report so other
+                pet owners can understand the situation quickly.
+            </p>
+
+        </div>
+
+
+        <div class="lost-found-choice-actions">
+
+            <a
+                href="{% url 'report_add' %}?type=LOST"
+                class="lf-choice-button lost"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <div>
+                    <strong>
+                        I lost my pet
+                    </strong>
+
+                    <span>
+                        Create a missing-pet alert
+                    </span>
+                </div>
+            </a>
+
+
+            <a
+                href="{% url 'report_add' %}?type=FOUND"
+                class="lf-choice-button found"
+            >
+                <i class="fa-solid fa-paw"></i>
+
+                <div>
+                    <strong>
+                        I found a pet
+                    </strong>
+
+                    <span>
+                        Help locate its family
+                    </span>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH / FILTER -->
+
+    <div class="section-block">
+
+        <div class="lf-toolbar">
+
+            <div class="lf-filter-tabs">
+
+                <a
+                    href="{% url 'report_overview' %}"
+                    class="
+                        lf-filter
+                        {% if report_filter == 'ALL' %}
+                            active
+                        {% endif %}
+                    "
+                >
+                    All
+                </a>
+
+
+                <a
+                    href="{% url 'report_overview' %}?type=LOST"
+                    class="
+                        lf-filter
+                        {% if report_filter == 'LOST' %}
+                            active
+                        {% endif %}
+                    "
+                >
+                    Lost
+                </a>
+
+
+                <a
+                    href="{% url 'report_overview' %}?type=FOUND"
+                    class="
+                        lf-filter
+                        {% if report_filter == 'FOUND' %}
+                            active
+                        {% endif %}
+                    "
+                >
+                    Found
+                </a>
+
+            </div>
+
+
+            <form
+                method="get"
+                class="lf-search"
+            >
+
+                {% if report_filter != "ALL" %}
+
+                    <input
+                        type="hidden"
+                        name="type"
+                        value="{{ report_filter }}"
+                    >
+
+                {% endif %}
+
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ search }}"
+                    placeholder="Search location, pet, breed..."
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- REPORTS -->
+
+        {% if reports %}
+
+            <div class="row g-4 mt-1">
+
+                {% for report in reports %}
+
+                    <div class="col-md-6 col-xl-4">
+
+                        <a
+                            href="{% url 'report_detail' report.report_id %}"
+                            class="lost-found-card reveal"
+                        >
+
+                            <div class="lf-card-photo">
+
+                                {% if report.photo %}
+
+                                    <img
+                                        src="{{ report.photo.url }}"
+                                        alt="Pet report"
+                                    >
+
+                                {% elif report.pet and report.pet.photo %}
+
+                                    <img
+                                        src="{{ report.pet.photo.url }}"
+                                        alt="{{ report.pet.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <div class="lf-photo-placeholder">
+
+                                        {% if report.report_type == "LOST" %}
+                                            🔍🐾
+                                        {% else %}
+                                            🐾
+                                        {% endif %}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <span
+                                    class="
+                                        lf-report-type
+                                        {% if report.report_type == 'LOST' %}
+                                            lost
+                                        {% else %}
+                                            found
+                                        {% endif %}
+                                    "
+                                >
+                                    {{ report.get_report_type_display }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="lf-card-body">
+
+                                <div class="lf-card-title">
+
+                                    {% if report.pet %}
+                                        {{ report.pet.name }}
+                                    {% elif report.report_type == "FOUND" %}
+                                        Found pet
+                                    {% else %}
+                                        Lost pet
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="lf-card-location">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    {{ report.location }}
+
+                                </div>
+
+
+                                <p>
+                                    {{ report.description|truncatechars:120 }}
+                                </p>
+
+
+                                <div class="lf-card-footer">
+
+                                    <span>
+                                        {{ report.created_at|timesince }}
+                                        ago
+                                    </span>
+
+                                    <span class="lf-view">
+                                        View details
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="pet-empty-large reveal">
+
+                <div class="pet-empty-illustration">
+                    🐾
+                </div>
+
+                <h2>
+                    No matching reports
+                </h2>
+
+                <p>
+                    There are currently no open reports
+                    matching your search or filter.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

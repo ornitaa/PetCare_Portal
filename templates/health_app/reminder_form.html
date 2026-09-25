@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ page_title }} | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-xl-8">
+
+    <div class="health-form-card reveal">
+
+        <a
+            href="{% url 'reminder_list' pet.pet_id %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Reminders
+        </a>
+
+
+        <span class="page-kicker d-block mt-4">
+            {{ pet.name }} · Care schedule
+        </span>
+
+
+        <h1 class="health-form-title">
+            {{ page_title }}
+        </h1>
+
+
+        <form method="post" class="mt-4">
+
+            {% csrf_token %}
+
+
+            <div class="row g-4">
+
+                <div class="col-md-7">
+
+                    <label class="form-label">
+                        Reminder title
+                    </label>
+
+                    {{ form.title }}
+
+                </div>
+
+
+                <div class="col-md-5">
+
+                    <label class="form-label">
+                        Type
+                    </label>
+
+                    {{ form.reminder_kind }}
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Date & time
+                    </label>
+
+                    {{ form.remind_at }}
+
+                    {% for error in form.remind_at.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Details
+                    </label>
+
+                    {{ form.details }}
+
+                </div>
+
+            </div>
+
+
+            <div class="clean-action-bar">
+
+                <a
+                    href="{% url 'reminder_list' pet.pet_id %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-check"></i>
+                    {{ button_text }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

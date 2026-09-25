@@ -1,0 +1,475 @@
+-- ============================================================
+-- PETCARE PORTAL
+-- CLEAN, DJANGO-FRIENDLY MYSQL SCHEMA
+-- ============================================================
+
+DROP DATABASE IF EXISTS petcare_portal;
+
+CREATE DATABASE petcare_portal
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE petcare_portal;
+
+
+-- ============================================================
+-- 1. USERS
+-- ============================================================
+
+CREATE TABLE users (
+    user_id BIGINT NOT NULL AUTO_INCREMENT,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(254) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(30) NULL,
+    is_staff BOOLEAN NOT NULL DEFAULT FALSE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (user_id),
+    UNIQUE KEY uq_users_email (email)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 2. PETS
+-- USER 1 -> MANY PETS
+-- ============================================================
+
+CREATE TABLE pets (
+    pet_id BIGINT NOT NULL AUTO_INCREMENT,
+    owner_id BIGINT NOT NULL,
+
+    name VARCHAR(100) NOT NULL,
+    species VARCHAR(100) NOT NULL,
+    breed VARCHAR(100) NULL,
+
+    sex ENUM(
+        'MALE',
+        'FEMALE',
+        'UNKNOWN'
+    ) NOT NULL DEFAULT 'UNKNOWN',
+
+    birth_date DATE NULL,
+    photo_url VARCHAR(500) NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (pet_id),
+
+    CONSTRAINT fk_pets_owner
+        FOREIGN KEY (owner_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_pets_owner (owner_id)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 3. MEDICAL RECORDS
+-- PET 1 -> MANY MEDICAL RECORDS
+-- ============================================================
+
+CREATE TABLE medical_records (
+    record_id BIGINT NOT NULL AUTO_INCREMENT,
+    pet_id BIGINT NOT NULL,
+
+    recorded_on DATE NOT NULL,
+
+    record_kind ENUM(
+        'CHECKUP',
+        'ILLNESS',
+        'INJURY',
+        'SURGERY',
+        'DIAGNOSIS',
+        'FOLLOW_UP',
+        'EMERGENCY',
+        'OTHER'
+    ) NOT NULL DEFAULT 'OTHER',
+
+    diagnosis TEXT NULL,
+    care_notes TEXT NULL,
+    vet_name VARCHAR(150) NULL,
+    attachment_url VARCHAR(500) NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (record_id),
+
+    CONSTRAINT fk_medical_pet
+        FOREIGN KEY (pet_id)
+        REFERENCES pets(pet_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_medical_pet (pet_id)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 4. MEDICATIONS
+-- MEDICAL RECORD 1 -> MANY MEDICATIONS
+-- ============================================================
+
+CREATE TABLE medications (
+    medication_id BIGINT NOT NULL AUTO_INCREMENT,
+    record_id BIGINT NOT NULL,
+
+    medication_name VARCHAR(150) NOT NULL,
+    dose VARCHAR(100) NOT NULL,
+    route VARCHAR(100) NULL,
+    frequency VARCHAR(150) NOT NULL,
+
+    start_date DATE NOT NULL,
+    end_date DATE NULL,
+
+    notes TEXT NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (medication_id),
+
+    CONSTRAINT fk_medication_record
+        FOREIGN KEY (record_id)
+        REFERENCES medical_records(record_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_medication_record (record_id)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 5. VACCINATIONS
+-- PET 1 -> MANY VACCINATIONS
+-- ============================================================
+
+CREATE TABLE vaccinations (
+    vaccination_id BIGINT NOT NULL AUTO_INCREMENT,
+    pet_id BIGINT NOT NULL,
+
+    vaccine_name VARCHAR(150) NOT NULL,
+    dose_label VARCHAR(100) NULL,
+
+    administered_on DATE NOT NULL,
+    next_due_on DATE NULL,
+
+    clinic_name VARCHAR(200) NULL,
+    notes TEXT NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (vaccination_id),
+
+    CONSTRAINT fk_vaccination_pet
+        FOREIGN KEY (pet_id)
+        REFERENCES pets(pet_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_vaccination_pet (pet_id),
+    INDEX idx_vaccination_due (next_due_on)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 6. GROWTH RECORDS
+-- PET 1 -> MANY GROWTH RECORDS
+-- ============================================================
+
+CREATE TABLE growth_records (
+    growth_id BIGINT NOT NULL AUTO_INCREMENT,
+    pet_id BIGINT NOT NULL,
+
+    measured_on DATE NOT NULL,
+
+    weight_kg DECIMAL(7,2) NULL,
+    height_cm DECIMAL(7,2) NULL,
+
+    milestone VARCHAR(255) NULL,
+    notes TEXT NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (growth_id),
+
+    CONSTRAINT fk_growth_pet
+        FOREIGN KEY (pet_id)
+        REFERENCES pets(pet_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_growth_pet (pet_id)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 7. CARE REMINDERS
+-- PET 1 -> MANY REMINDERS
+-- ============================================================
+
+CREATE TABLE care_reminders (
+    reminder_id BIGINT NOT NULL AUTO_INCREMENT,
+    pet_id BIGINT NOT NULL,
+
+    title VARCHAR(200) NOT NULL,
+
+    reminder_kind ENUM(
+        'VET_APPOINTMENT',
+        'MEDICATION',
+        'VACCINATION',
+        'DEWORMING',
+        'GROOMING',
+        'FEEDING',
+        'OTHER'
+    ) NOT NULL DEFAULT 'OTHER',
+
+    remind_at DATETIME NOT NULL,
+    details TEXT NULL,
+
+    status ENUM(
+        'PENDING',
+        'COMPLETED',
+        'CANCELLED'
+    ) NOT NULL DEFAULT 'PENDING',
+
+    completed_at DATETIME NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (reminder_id),
+
+    CONSTRAINT fk_reminder_pet
+        FOREIGN KEY (pet_id)
+        REFERENCES pets(pet_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_reminder_pet (pet_id),
+    INDEX idx_reminder_date (remind_at)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 8. ADOPTION LISTINGS
+-- PET 1 -> MANY HISTORICAL LISTINGS
+--
+-- IMPORTANT:
+-- one ACTIVE listing per pet will be enforced in Django.
+-- ============================================================
+
+CREATE TABLE adoption_listings (
+    listing_id BIGINT NOT NULL AUTO_INCREMENT,
+    pet_id BIGINT NOT NULL,
+
+    description TEXT NOT NULL,
+    location VARCHAR(255) NOT NULL,
+
+    listing_status ENUM(
+        'ACTIVE',
+        'ADOPTED',
+        'CLOSED'
+    ) NOT NULL DEFAULT 'ACTIVE',
+
+    listed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    closed_at DATETIME NULL,
+
+    PRIMARY KEY (listing_id),
+
+    CONSTRAINT fk_adoption_pet
+        FOREIGN KEY (pet_id)
+        REFERENCES pets(pet_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_adoption_pet (pet_id),
+    INDEX idx_adoption_status (listing_status)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 9. PET REPORTS
+--
+-- LOST -> usually registered pet
+-- FOUND -> pet_id can be NULL
+-- ============================================================
+
+CREATE TABLE pet_reports (
+    report_id BIGINT NOT NULL AUTO_INCREMENT,
+
+    reporter_id BIGINT NOT NULL,
+    pet_id BIGINT NULL,
+
+    report_type ENUM(
+        'LOST',
+        'FOUND'
+    ) NOT NULL,
+
+    description TEXT NOT NULL,
+    location VARCHAR(255) NOT NULL,
+
+    incident_at DATETIME NOT NULL,
+    photo_url VARCHAR(500) NULL,
+
+    report_status ENUM(
+        'OPEN',
+        'RESOLVED',
+        'CLOSED'
+    ) NOT NULL DEFAULT 'OPEN',
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (report_id),
+
+    CONSTRAINT fk_report_user
+        FOREIGN KEY (reporter_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_report_pet
+        FOREIGN KEY (pet_id)
+        REFERENCES pets(pet_id)
+        ON DELETE SET NULL,
+
+    INDEX idx_report_user (reporter_id),
+    INDEX idx_report_pet (pet_id),
+    INDEX idx_report_type (report_type),
+    INDEX idx_report_status (report_status)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 10. COMMUNITY POSTS
+-- USER 1 -> MANY POSTS
+-- ============================================================
+
+CREATE TABLE community_posts (
+    post_id BIGINT NOT NULL AUTO_INCREMENT,
+    author_id BIGINT NOT NULL,
+
+    title VARCHAR(255) NOT NULL,
+    body TEXT NOT NULL,
+    image_url VARCHAR(500) NULL,
+
+    moderation_status ENUM(
+        'PENDING',
+        'APPROVED',
+        'REJECTED'
+    ) NOT NULL DEFAULT 'PENDING',
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (post_id),
+
+    CONSTRAINT fk_post_author
+        FOREIGN KEY (author_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_post_author (author_id)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- 11. COMMENTS
+-- POST 1 -> MANY COMMENTS
+-- USER 1 -> MANY COMMENTS
+-- ============================================================
+
+CREATE TABLE comments (
+    comment_id BIGINT NOT NULL AUTO_INCREMENT,
+
+    post_id BIGINT NOT NULL,
+    author_id BIGINT NOT NULL,
+
+    body TEXT NOT NULL,
+
+    moderation_status ENUM(
+        'PENDING',
+        'APPROVED',
+        'REJECTED'
+    ) NOT NULL DEFAULT 'PENDING',
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (comment_id),
+
+    CONSTRAINT fk_comment_post
+        FOREIGN KEY (post_id)
+        REFERENCES community_posts(post_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_comment_author
+        FOREIGN KEY (author_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    INDEX idx_comment_post (post_id),
+    INDEX idx_comment_author (author_id)
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- VERIFY
+-- ============================================================
+
+SHOW TABLES;
+
+CREATE USER IF NOT EXISTS 'petcare_app'@'localhost'
+IDENTIFIED BY 'PetCare@2026';
+
+GRANT ALL PRIVILEGES
+ON petcare_portal.*
+TO 'petcare_app'@'localhost';
+
+FLUSH PRIVILEGES;
+
+USE petcare_portal;
+
+ALTER TABLE users
+    ADD COLUMN last_login DATETIME NULL AFTER password_hash,
+    ADD COLUMN is_superuser BOOLEAN NOT NULL DEFAULT FALSE AFTER is_staff;
+
+
+CREATE TABLE push_devices (
+
+    device_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    user_id BIGINT NOT NULL,
+
+    firebase_fid VARCHAR(255) NOT NULL,
+
+    device_name VARCHAR(120) NULL,
+
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    last_registered_at DATETIME NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+    created_at DATETIME NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at DATETIME NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT uq_push_device_fid
+        UNIQUE (firebase_fid),
+
+    CONSTRAINT fk_push_device_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE
+);
+
+ALTER TABLE care_reminders
+ADD COLUMN notification_sent_at DATETIME NULL;
+
+ALTER TABLE care_reminders
+ADD COLUMN vaccination_id BIGINT NULL AFTER pet_id,
+ADD CONSTRAINT uq_care_reminders_vaccination
+    UNIQUE (vaccination_id),
+ADD CONSTRAINT fk_care_reminders_vaccination
+    FOREIGN KEY (vaccination_id)
+    REFERENCES vaccinations(vaccination_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;

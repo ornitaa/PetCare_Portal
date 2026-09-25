@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}PetCare Portal | Home{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container hero-wrapper">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="hero-text-block reveal">
+                    <div class="hero-tag">
+                        One home for every pet-care need
+                    </div>
+
+                    <h1 class="hero-title">
+                        Give every pet a healthier, safer life.
+                    </h1>
+
+                    <p class="hero-desc">
+                        Keep your pets' profiles, medical history, vaccinations,
+                        growth, care reminders, lost & found reports,
+                        adoption activities and community connections
+                        together in one friendly portal.
+                    </p>
+
+                    <div class="hero-btn-group">
+                        <a href="{% url 'register' %}" class="pet-btn pet-btn-primary">
+                            Get started
+                        </a>
+                        <a href="{% url 'login' %}" class="pet-btn pet-btn-secondary">
+                            I already have an account
+                        </a>
+                    </div>
+
+                    <div class="hero-features">
+
+    <div class="hero-feature-item">
+        <span class="feature-icon">
+            <i class="fa-solid fa-heart-pulse"></i>
+        </span>
+        <span>Health tracking</span>
+    </div>
+
+    <div class="hero-feature-item">
+        <span class="feature-icon">
+            <i class="fa-solid fa-bell"></i>
+        </span>
+        <span>Smart reminders</span>
+    </div>
+
+    <div class="hero-feature-item">
+        <span class="feature-icon">
+            <i class="fa-solid fa-shield-heart"></i>
+        </span>
+        <span>Lost &amp; found</span>
+    </div>
+
+</div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="hero-visual-wrap reveal">
+                     <div class="hero-visual-card">
+
+                         <div class="hero-badge badge-top-left">
+                              Care reminders
+                        </div>
+
+                     <div class="hero-badge badge-top-right">
+                            Health records
+                    </div>
+
+                    <div class="hero-pet-stage">
+                        <span class="hero-pet dog-float">🐶</span>
+                        <span class="hero-pet cat-float">🐱</span>
+                     </div>
+
+                     <h3 class="hero-card-title">Their care. One place.</h3>
+
+                      <div class="hero-badge badge-bottom-center">
+                        Safe &amp; organized
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

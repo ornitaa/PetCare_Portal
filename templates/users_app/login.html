@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Login | PetCare Portal{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="container">
+        <div class="auth-shell">
+            <div class="row g-0">
+                <div class="col-lg-6">
+                    <div class="auth-visual">
+                        <div class="auth-visual-content">
+                            <div class="auth-kicker">Welcome back</div>
+
+                            <h2 class="auth-side-title">
+                                Continue your pet-care journey.
+                            </h2>
+
+                            <p class="auth-side-text">
+                                Access your pet profiles, records, reminders
+                                and community space from one beautiful and
+                                organized portal.
+                            </p>
+
+                            <div class="auth-badges">
+                                <span class="auth-badge">Health Tracking</span>
+                                <span class="auth-badge">Vaccinations</span>
+                                <span class="auth-badge">Community</span>
+                            </div>
+                        </div>
+
+                        <div class="auth-animals">🐕🐈</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="auth-form-panel">
+                        <div class="auth-form-inner">
+                            <h1 class="auth-title">Sign in</h1>
+                            <p class="auth-subtitle">
+                                Welcome back to PetCare Portal.
+                            </p>
+
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger pet-alert">
+                                    {% for error in form.non_field_errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <form method="post">
+                                {% csrf_token %}
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ form.email.id_for_label }}">Email address</label>
+                                    {{ form.email }}
+                                    {% for error in form.email.errors %}
+                                        <div class="form-error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                                    <div class="password-wrap">
+                                        {{ form.password }}
+                                        <button type="button" class="password-toggle" data-target="{{ form.password.id_for_label }}">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="forgot-password-row">
+
+                                        <a
+                                            href="{% url 'password_reset' %}"
+                                         class="forgot-password-link"
+                                        >
+                                            Forgot password?
+                                        </a>
+
+                                    </div>
+                                    
+                                    {% for error in form.password.errors %}
+                                        <div class="form-error">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="form-check mb-4">
+                                    {{ form.remember_me }}
+                                    <label class="form-check-label" for="{{ form.remember_me.id_for_label }}">
+                                        Remember me
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="auth-submit">
+                                    Sign in
+                                </button>
+                            </form>
+
+                            <div class="auth-bottom-note">
+                                Don’t have an account?
+                                <a href="{% url 'register' %}" class="fw-bold">Create one</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

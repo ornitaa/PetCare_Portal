@@ -1,0 +1,388 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PetCare Portal\n"
+"Language: bn\n"
+"Language-Team: Bengali\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "Toggle navigation"
+msgstr "নেভিগেশন খুলুন"
+
+
+msgid "Dashboard"
+msgstr "ড্যাশবোর্ড"
+
+
+msgid "Pet Services"
+msgstr "পেট সেবা"
+
+
+msgid "Community"
+msgstr "কমিউনিটি"
+
+
+msgid "Explore"
+msgstr "অন্যান্য"
+
+
+msgid "Lost & Found"
+msgstr "হারানো ও পাওয়া"
+
+
+msgid "Adoption"
+msgstr "দত্তক"
+
+
+msgid "Emergency"
+msgstr "জরুরি সেবা"
+
+
+msgid "My account"
+msgstr "আমার অ্যাকাউন্ট"
+
+
+msgid "Edit profile"
+msgstr "প্রোফাইল সম্পাদনা"
+
+
+msgid "Notifications"
+msgstr "নোটিফিকেশন"
+
+
+msgid "Change password"
+msgstr "পাসওয়ার্ড পরিবর্তন"
+
+
+msgid "Admin Dashboard"
+msgstr "অ্যাডমিন ড্যাশবোর্ড"
+
+
+msgid "Log out"
+msgstr "লগ আউট"
+
+
+msgid "Login"
+msgstr "লগ ইন"
+
+
+msgid "Register"
+msgstr "রেজিস্টার"
+
+
+msgid "Close"
+msgstr "বন্ধ করুন"
+
+
+msgid "Caring made simpler for every pet parent"
+msgstr "প্রতিটি পোষা প্রাণীর অভিভাবকের জন্য যত্ন আরও সহজ"
+
+
+msgid "PetCare Reminder"
+msgstr "PetCare রিমাইন্ডার"
+
+
+msgid "You have a care reminder."
+msgstr "আপনার একটি পেট কেয়ার রিমাইন্ডার রয়েছে।"
+
+# ============================================================
+# DASHBOARD TRANSLATIONS
+# ============================================================
+
+msgid "Your PetCare home"
+msgstr "আপনার PetCare হোম"
+
+msgid "Hi, %(name)s 👋"
+msgstr "হ্যালো, %(name)s 👋"
+
+msgid "Everything important about your pets, all organized in one place."
+msgstr "আপনার পোষা প্রাণীদের গুরুত্বপূর্ণ সব তথ্য এক জায়গায় সুন্দরভাবে সাজানো।"
+
+msgid "My pets"
+msgstr "আমার পোষা প্রাণী"
+
+msgid "Upcoming vaccines"
+msgstr "আসন্ন টিকা"
+
+msgid "Care reminders"
+msgstr "যত্নের রিমাইন্ডার"
+
+msgid "My community posts"
+msgstr "আমার কমিউনিটি পোস্ট"
+
+msgid "Quick actions"
+msgstr "দ্রুত কাজ"
+
+msgid "Useful things you’ll use often."
+msgstr "যেসব সুবিধা আপনি প্রায়ই ব্যবহার করবেন।"
+
+msgid "Add a pet"
+msgstr "পোষা প্রাণী যোগ করুন"
+
+msgid "Create a new pet profile."
+msgstr "নতুন পোষা প্রাণীর প্রোফাইল তৈরি করুন।"
+
+msgid "Vaccinations"
+msgstr "টিকাদান"
+
+msgid "View upcoming, overdue and past vaccine records."
+msgstr "আসন্ন, সময় পেরিয়ে যাওয়া এবং আগের টিকার রেকর্ড দেখুন।"
+
+msgid "Reminders"
+msgstr "রিমাইন্ডার"
+
+msgid "View upcoming and overdue pet-care tasks."
+msgstr "আসন্ন ও সময় পেরিয়ে যাওয়া পেট কেয়ার কাজগুলো দেখুন।"
+
+msgid "Report missing pets and help found pets get home."
+msgstr "হারানো পোষা প্রাণীর রিপোর্ট করুন এবং পাওয়া প্রাণীকে ঘরে ফিরতে সাহায্য করুন।"
+
+msgid "Your companions and their profiles."
+msgstr "আপনার পোষা সঙ্গী ও তাদের প্রোফাইল।"
+
+msgid "%(count)s pet"
+msgid_plural "%(count)s pets"
+msgstr[0] "%(count)sটি পোষা প্রাণী"
+msgstr[1] "%(count)sটি পোষা প্রাণী"
+
+msgid "View all pets"
+msgstr "সব পোষা প্রাণী দেখুন"
+
+msgid "No pets added yet"
+msgstr "এখনও কোনো পোষা প্রাণী যোগ করা হয়নি"
+
+msgid "Add your first pet profile to start tracking health, reminders and all important care details."
+msgstr "স্বাস্থ্য, রিমাইন্ডার এবং গুরুত্বপূর্ণ যত্নের তথ্য ট্র্যাক করতে আপনার প্রথম পোষা প্রাণীর প্রোফাইল যোগ করুন।"
+
+msgid "Add first pet"
+msgstr "প্রথম পোষা প্রাণী যোগ করুন"
+
+msgid "Latest discussions"
+msgstr "সাম্প্রতিক আলোচনা"
+
+msgid "Questions, stories and experiences from pet owners."
+msgstr "পোষা প্রাণীর মালিকদের প্রশ্ন, গল্প ও অভিজ্ঞতা।"
+
+msgid "%(elapsed)s ago"
+msgstr "%(elapsed)s আগে"
+
+msgid "No discussions yet"
+msgstr "এখনও কোনো আলোচনা নেই"
+
+msgid "Community discussions will appear here."
+msgstr "কমিউনিটির আলোচনা এখানে দেখা যাবে।"
+
+msgid "Explore Community"
+msgstr "কমিউনিটি দেখুন"
+
+msgid "Pets looking for homes"
+msgstr "নতুন ঘর খুঁজছে এমন পোষা প্রাণী"
+
+msgid "Meet pets currently available for adoption."
+msgstr "বর্তমানে দত্তক নেওয়ার জন্য উপলভ্য পোষা প্রাণীগুলো দেখুন।"
+
+msgid "No active adoption listings"
+msgstr "কোনো সক্রিয় দত্তক তালিকা নেই"
+
+msgid "Available pets will appear here."
+msgstr "দত্তকের জন্য উপলভ্য পোষা প্রাণীগুলো এখানে দেখা যাবে।"
+
+msgid "Explore Adoption"
+msgstr "দত্তক বিভাগ দেখুন"
+
+# ============================================================
+# PET LIST TRANSLATIONS
+# ============================================================
+
+msgid "My Pets"
+msgstr "আমার পোষা প্রাণী"
+
+msgid "My companions"
+msgstr "আমার পোষা সঙ্গীরা"
+
+msgid "Manage your pets and keep their important care information organized."
+msgstr "আপনার পোষা প্রাণীদের পরিচালনা করুন এবং তাদের গুরুত্বপূর্ণ যত্নের তথ্য গুছিয়ে রাখুন।"
+
+msgid "View profile"
+msgstr "প্রোফাইল দেখুন"
+
+msgid "Born %(birth)s"
+msgstr "জন্ম %(birth)s"
+
+msgid "Your pet family"
+msgstr "আপনার পোষা পরিবার"
+
+msgid "No pets here yet"
+msgstr "এখনও কোনো পোষা প্রাণী যোগ করা হয়নি"
+
+msgid "Create your first pet profile and start keeping health records, growth updates, vaccinations and reminders together."
+msgstr "আপনার প্রথম পোষা প্রাণীর প্রোফাইল তৈরি করুন এবং স্বাস্থ্য রেকর্ড, বৃদ্ধির তথ্য, টিকাদান ও রিমাইন্ডার একসাথে সংরক্ষণ করা শুরু করুন।"
+
+msgid "Add my first pet"
+msgstr "আমার প্রথম পোষা প্রাণী যোগ করুন"
+
+# ============================================================
+# PET DETAIL TRANSLATIONS
+# ============================================================
+
+msgid "Back to My Pets"
+msgstr "আমার পোষা প্রাণীতে ফিরে যান"
+
+msgid "Pet profile"
+msgstr "পোষা প্রাণীর প্রোফাইল"
+
+msgid "Delete pet"
+msgstr "পোষা প্রাণী মুছুন"
+
+msgid "Delete %(name)s"
+msgstr "%(name)s-কে মুছুন"
+
+msgid "Species"
+msgstr "প্রজাতি"
+
+msgid "Breed"
+msgstr "জাত"
+
+msgid "Not specified"
+msgstr "উল্লেখ করা হয়নি"
+
+msgid "Sex"
+msgstr "লিঙ্গ"
+
+msgid "Birth date"
+msgstr "জন্ম তারিখ"
+
+msgid "Unknown"
+msgstr "অজানা"
+
+msgid "%(name)s's care"
+msgstr "%(name)s-এর যত্ন"
+
+msgid "Keep health and everyday care information organized in one place."
+msgstr "স্বাস্থ্য ও দৈনন্দিন যত্নের তথ্য এক জায়গায় গুছিয়ে রাখুন।"
+
+msgid "Medical records"
+msgstr "মেডিকেল রেকর্ড"
+
+msgid "Visits, diagnoses and treatment notes."
+msgstr "ভেট ভিজিট, রোগ নির্ণয় এবং চিকিৎসার নোট।"
+
+msgid "Open records"
+msgstr "রেকর্ড দেখুন"
+
+msgid "Vaccines, administered dates and future doses."
+msgstr "টিকা, প্রয়োগের তারিখ এবং ভবিষ্যৎ ডোজের তথ্য।"
+
+msgid "Open vaccinations"
+msgstr "টিকার তথ্য দেখুন"
+
+msgid "Growth"
+msgstr "বৃদ্ধি"
+
+msgid "Weight, height and important milestones."
+msgstr "ওজন, উচ্চতা এবং গুরুত্বপূর্ণ বৃদ্ধির তথ্য।"
+
+msgid "View growth"
+msgstr "বৃদ্ধির তথ্য দেখুন"
+
+msgid "Appointments and everyday care schedules."
+msgstr "অ্যাপয়েন্টমেন্ট এবং দৈনন্দিন যত্নের সময়সূচি।"
+
+msgid "View reminders"
+msgstr "রিমাইন্ডার দেখুন"
+
+msgid "Add Pet"
+msgstr "পোষা প্রাণী যোগ করুন"
+
+msgid "Edit Pet"
+msgstr "পোষা প্রাণীর তথ্য সম্পাদনা করুন"
+
+msgid "Save Pet"
+msgstr "পোষা প্রাণী সংরক্ষণ করুন"
+
+msgid "Update Pet"
+msgstr "পোষা প্রাণীর তথ্য আপডেট করুন"
+
+# ============================================================
+# PET FORM - ACTUAL UI STRINGS
+# ============================================================
+
+msgid "Add the basic information that helps identify and care for your pet."
+msgstr "আপনার পোষা প্রাণীকে শনাক্ত করা ও যত্ন নেওয়ার জন্য প্রয়োজনীয় মৌলিক তথ্য যোগ করুন।"
+
+msgid "Fields marked as required need to be completed before saving."
+msgstr "সংরক্ষণ করার আগে আবশ্যক ঘরগুলো পূরণ করতে হবে।"
+
+msgid "Pet name"
+msgstr "পোষা প্রাণীর নাম"
+
+msgid "Pet photo"
+msgstr "পোষা প্রাণীর ছবি"
+
+msgid "Add a clear photo"
+msgstr "একটি পরিষ্কার ছবি যোগ করুন"
+
+msgid "It makes the pet profile easier to recognize."
+msgstr "এটি পোষা প্রাণীর প্রোফাইল সহজে চিনতে সাহায্য করে।"
+
+msgid "Cancel"
+msgstr "বাতিল"
+
+msgid "Create pet profile"
+msgstr "পোষা প্রাণীর প্রোফাইল তৈরি করুন"
+
+msgid "Update pet profile"
+msgstr "পোষা প্রাণীর প্রোফাইল আপডেট করুন"
+
+msgid "Pet preview"
+msgstr "পোষা প্রাণীর প্রিভিউ"
+
+# ============================================================
+# PET FORM FIELD TRANSLATIONS
+# ============================================================
+
+msgid "Pet's name"
+msgstr "পোষা প্রাণীর নাম"
+
+msgid "e.g. Cat, Dog"
+msgstr "যেমন: বিড়াল, কুকুর"
+
+msgid "Breed (optional)"
+msgstr "জাত (ঐচ্ছিক)"
+
+msgid "Unknown"
+msgstr "অজানা"
+
+msgid "Male"
+msgstr "পুরুষ"
+
+msgid "Female"
+msgstr "স্ত্রী"
+
+# ============================================================
+# PET DELETE TRANSLATIONS
+# ============================================================
+
+msgid "Delete %(name)s"
+msgstr "%(name)s মুছুন"
+
+msgid "Delete pet"
+msgstr "পোষা প্রাণী মুছুন"
+
+msgid "Remove %(name)s?"
+msgstr "%(name)s-কে সরিয়ে ফেলবেন?"
+
+msgid "This will permanently remove <strong>%(name)s</strong> from your PetCare account."
+msgstr "এটি আপনার PetCare অ্যাকাউন্ট থেকে <strong>%(name)s</strong>-কে স্থায়ীভাবে মুছে ফেলবে।"
+
+msgid "Future health records, vaccinations, reminders and growth information connected to this pet will also be affected."
+msgstr "এই পোষা প্রাণীর সঙ্গে যুক্ত ভবিষ্যৎ স্বাস্থ্য রেকর্ড, টিকাদান, রিমাইন্ডার এবং বৃদ্ধির তথ্যও প্রভাবিত হবে।"
+
+msgid "Keep %(name)s"
+msgstr "%(name)s-কে রাখুন"
+
+msgid "Delete permanently"
+msgstr "স্থায়ীভাবে মুছুন"
+

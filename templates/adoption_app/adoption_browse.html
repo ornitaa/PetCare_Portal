@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}
+Adoption | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page adoption-page">
+
+<div class="container">
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Find a loving home
+            </span>
+
+            <h1 class="page-title">
+                Pet Adoption
+            </h1>
+
+            <p class="page-description">
+                Discover pets looking for caring homes,
+                or create a listing for one of your own pets.
+            </p>
+
+        </div>
+
+
+        <div class="action-group">
+
+            <a
+                href="{% url 'my_adoption_listings' %}"
+                class="pet-btn pet-btn-secondary"
+            >
+                <i class="fa-solid fa-folder-open"></i>
+                My listings
+            </a>
+
+
+            <a
+                href="{% url 'adoption_create' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                List a pet
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="adoption-hero reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                A new beginning
+            </span>
+
+            <h2>
+                Every pet deserves the right home.
+            </h2>
+
+            <p>
+                Browse pets currently available for adoption
+                and learn more about their personality and needs.
+            </p>
+
+        </div>
+
+
+        <div class="adoption-hero-art">
+            <i class="fa-solid fa-home"></i>
+        </div>
+
+    </div>
+
+
+
+    <div class="section-block">
+
+        <div class="adoption-toolbar">
+
+            <div>
+
+                <h2 class="section-title mb-0">
+                    Available pets
+                </h2>
+
+                <p class="section-text">
+                    Active adoption listings from pet owners.
+                </p>
+
+            </div>
+
+
+            <form
+                method="get"
+                class="adoption-search"
+            >
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ search }}"
+                    placeholder="Search pet, breed or location..."
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+
+        {% if listings %}
+
+            <div class="row g-4">
+
+                {% for listing in listings %}
+
+                    <div class="col-md-6 col-xl-4">
+
+                        <a
+                            href="{% url 'adoption_detail' listing.listing_id %}"
+                            class="adoption-card reveal"
+                        >
+
+                            <div class="adoption-card-photo">
+
+                                {% if listing.pet.photo %}
+
+                                    <img
+                                        src="{{ listing.pet.photo.url }}"
+                                        alt="{{ listing.pet.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <div class="adoption-placeholder">
+
+                                        {% if listing.pet.species|lower == "cat" %}
+                                            🐱
+                                        {% elif listing.pet.species|lower == "dog" %}
+                                            🐶
+                                        {% else %}
+                                            🐾
+                                        {% endif %}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <span class="adoption-status active">
+                                    Available
+                                </span>
+
+                            </div>
+
+
+                            <div class="adoption-card-body">
+
+                                <h3>
+                                    {{ listing.pet.name }}
+                                </h3>
+
+
+                                <p class="adoption-pet-meta">
+
+                                    {{ listing.pet.species }}
+
+                                    {% if listing.pet.breed %}
+                                        · {{ listing.pet.breed }}
+                                    {% endif %}
+
+                                </p>
+
+
+                                <div class="adoption-location">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    {{ listing.location }}
+
+                                </div>
+
+
+                                <p class="adoption-description">
+                                    {{ listing.description|truncatechars:125 }}
+                                </p>
+
+
+                                <div class="adoption-card-footer">
+
+                                    <span>
+                                        Listed
+                                        {{ listing.listed_at|timesince }}
+                                        ago
+                                    </span>
+
+                                    <strong>
+                                        View pet
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="pet-empty-large reveal">
+
+                <div class="pet-empty-illustration">
+                    🏡
+                </div>
+
+                <h2>
+                    No available pets found
+                </h2>
+
+                <p>
+                    There are currently no active adoption
+                    listings matching your search.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

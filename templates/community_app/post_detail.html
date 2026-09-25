@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ post.title }} | Community
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <a
+        href="{% url 'community_feed' %}"
+        class="back-link"
+    >
+        <i class="fa-solid fa-arrow-left"></i>
+        Community
+    </a>
+
+
+    <article class="community-detail-card reveal">
+
+        <div class="community-post-author">
+
+            <div class="community-avatar large">
+
+                {{ post.author.full_name|first|upper }}
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    {{ post.author.full_name }}
+                </strong>
+
+                <span>
+                    {{ post.created_at|date:"M d, Y · g:i A" }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        {% if post.author == request.user %}
+
+            <span
+                class="
+                    community-status
+                    community-status-{{ post.moderation_status|lower }}
+                "
+            >
+                {{ post.get_moderation_status_display }}
+            </span>
+
+        {% endif %}
+
+
+        <h1>
+            {{ post.title }}
+        </h1>
+
+
+        <div class="community-detail-body">
+
+            {{ post.body|linebreaks }}
+
+        </div>
+
+
+        {% if post.image %}
+
+            <div class="community-detail-image">
+
+                <img
+                    src="{{ post.image.url }}"
+                    alt="{{ post.title }}"
+                >
+
+            </div>
+
+        {% endif %}
+
+
+        {% if post.author == request.user %}
+
+            <div class="community-owner-actions">
+
+                <a
+                    href="{% url 'community_post_edit' post.post_id %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    <i class="fa-solid fa-pen"></i>
+                    Edit post
+                </a>
+
+                <a
+                    href="{% url 'community_post_delete' post.post_id %}"
+                    class="community-delete-button"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </article>
+
+
+    {% if post.moderation_status == "APPROVED" %}
+
+        <div class="community-comments-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title mb-0">
+                        Discussion
+                    </h2>
+
+                    <p class="section-text">
+                        Join the conversation.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="community-comment-form reveal">
+
+                <form
+                    method="post"
+                    action="{% url 'community_comment_add' post.post_id %}"
+                >
+
+                    {% csrf_token %}
+
+                    {{ comment_form.body }}
+
+                    <div class="community-comment-submit">
+
+                        <small>
+                            Be respectful and helpful to other pet owners.
+                        </small>
+
+
+                        <button
+                            type="submit"
+                            class="pet-btn pet-btn-primary"
+                        >
+                            <i class="fa-regular fa-comment"></i>
+                            Comment
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            {% if comments %}
+
+                <div class="community-comments">
+
+                    {% for comment in comments %}
+
+                        <div class="community-comment reveal">
+
+                            <div class="community-avatar small">
+
+                                {{ comment.author.full_name|first|upper }}
+
+                            </div>
+
+
+                            <div class="community-comment-body">
+
+                                <div class="community-comment-head">
+
+                                    <div>
+
+                                        <strong>
+                                            {{ comment.author.full_name }}
+                                        </strong>
+
+                                        <span>
+                                            {{ comment.created_at|timesince }} ago
+                                        </span>
+
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <p>
+                                    {{ comment.body|linebreaksbr }}
+                                </p>
+
+
+                                {% if comment.author == request.user %}
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'community_comment_delete' post.post_id comment.comment_id %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="comment-delete-button"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="simple-empty-card">
+
+                    <i class="fa-regular fa-comment"></i>
+
+                    <div>
+                        <strong>No comments yet</strong>
+
+                        <p>
+                            Start the discussion.
+                        </p>
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    {% else %}
+
+        <div class="community-moderation-note">
+
+            <i class="fa-solid fa-clock"></i>
+
+            <div>
+
+                <strong>
+                    This post is not public yet.
+                </strong>
+
+                <p>
+                    Comments will become available if the
+                    post is approved.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,1191 @@
+{% extends "base.html" %}
+
+{% block title %}
+Emergency Care Guide | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page emergency-guide-page">
+
+<div class="container">
+
+
+    <!-- ======================================================
+         PAGE HEADER
+         ====================================================== -->
+
+    <div class="pet-page-header reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Pet first aid
+            </span>
+
+            <h1 class="page-title">
+                Emergency Care Guide
+            </h1>
+
+            <p class="page-description">
+                Quick first-aid guidance for common pet emergencies
+                while arranging professional veterinary care.
+            </p>
+
+        </div>
+
+
+        <div class="page-header-actions">
+
+            <a
+                href="{% url 'nearby_vets' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-location-dot"></i>
+                Find Nearby Vet
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         EMERGENCY WARNING
+         ====================================================== -->
+
+    <div class="emergency-warning-card reveal">
+
+        <div class="emergency-warning-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+
+        <div>
+
+            <strong>
+                This guide does not replace veterinary care.
+            </strong>
+
+            <p>
+                Severe bleeding, breathing difficulty, collapse,
+                unconsciousness, seizures, poisoning, major trauma,
+                or suspected heatstroke can require urgent veterinary
+                treatment.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'nearby_vets' %}"
+            class="emergency-warning-button"
+        >
+            Find help
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         FIRST RESPONSE
+         ====================================================== -->
+
+    <div class="emergency-first-response reveal">
+
+        <div class="emergency-section-heading">
+
+            <span class="emergency-heading-icon">
+                <i class="fa-solid fa-shield-heart"></i>
+            </span>
+
+            <div>
+
+                <span class="page-kicker">
+                    Start here
+                </span>
+
+                <h2>
+                    First response
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-first-grid">
+
+
+            <div class="emergency-first-item">
+
+                <span>1</span>
+
+                <div>
+
+                    <strong>
+                        Stay safe
+                    </strong>
+
+                    <p>
+                        Check the surroundings before approaching.
+                        An injured or frightened pet may bite or scratch.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="emergency-first-item">
+
+                <span>2</span>
+
+                <div>
+
+                    <strong>
+                        Check the pet
+                    </strong>
+
+                    <p>
+                        Look for breathing difficulty, severe bleeding,
+                        collapse, seizures, major injuries, or poisoning.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="emergency-first-item">
+
+                <span>3</span>
+
+                <div>
+
+                    <strong>
+                        Minimize movement
+                    </strong>
+
+                    <p>
+                        Keep the pet calm and avoid unnecessary movement,
+                        especially after falls, accidents, or suspected fractures.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="emergency-first-item">
+
+                <span>4</span>
+
+                <div>
+
+                    <strong>
+                        Contact a veterinarian
+                    </strong>
+
+                    <p>
+                        Arrange professional care as soon as possible
+                        and transport the pet carefully.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         QUICK EMERGENCY MENU
+         ====================================================== -->
+
+    <div class="section-block">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title mb-0">
+                    Choose the emergency
+                </h2>
+
+                <p class="section-text">
+                    Select a situation to jump to the first-aid steps.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-topic-grid">
+
+
+            <a
+                href="#breathing"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-lungs"></i>
+                </span>
+
+                <strong>
+                    Choking & Breathing
+                </strong>
+
+                <span>
+                    Difficulty breathing or airway obstruction
+                </span>
+
+            </a>
+
+
+            <a
+                href="#bleeding"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-droplet"></i>
+                </span>
+
+                <strong>
+                    Severe Bleeding
+                </strong>
+
+                <span>
+                    Wounds or uncontrolled blood loss
+                </span>
+
+            </a>
+
+
+            <a
+                href="#poisoning"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-flask"></i>
+                </span>
+
+                <strong>
+                    Poisoning
+                </strong>
+
+                <span>
+                    Chemicals, medicines or toxic substances
+                </span>
+
+            </a>
+
+
+            <a
+                href="#seizure"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-bolt"></i>
+                </span>
+
+                <strong>
+                    Seizure
+                </strong>
+
+                <span>
+                    Convulsions or abnormal body movements
+                </span>
+
+            </a>
+
+
+            <a
+                href="#heatstroke"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-temperature-high"></i>
+                </span>
+
+                <strong>
+                    Heatstroke
+                </strong>
+
+                <span>
+                    Dangerous overheating
+                </span>
+
+            </a>
+
+
+            <a
+                href="#burns"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-fire-flame-curved"></i>
+                </span>
+
+                <strong>
+                    Burns
+                </strong>
+
+                <span>
+                    Heat, chemical or electrical injury
+                </span>
+
+            </a>
+
+
+            <a
+                href="#trauma"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-bone"></i>
+                </span>
+
+                <strong>
+                    Fracture & Trauma
+                </strong>
+
+                <span>
+                    Falls, accidents and broken bones
+                </span>
+
+            </a>
+
+
+            <a
+                href="#collapse"
+                class="emergency-topic-card reveal"
+            >
+
+                <span class="emergency-topic-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </span>
+
+                <strong>
+                    Collapse
+                </strong>
+
+                <span>
+                    Unconscious or suddenly very weak
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         BREATHING / CHOKING
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="breathing"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-lungs"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-critical">
+                    Urgent
+                </span>
+
+                <h2>
+                    Choking or Difficulty Breathing
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+
+            <div>
+
+                <h3>
+                    What you may notice
+                </h3>
+
+                <ul>
+                    <li>Struggling or noisy breathing</li>
+                    <li>Gagging or repeated coughing</li>
+                    <li>Pawing at the mouth</li>
+                    <li>Blue, grey or unusually pale gums</li>
+                    <li>Collapse or loss of consciousness</li>
+                </ul>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+                    <li>Keep the pet as calm as possible.</li>
+
+                    <li>
+                        If an object is clearly visible in the mouth
+                        and can be removed safely, carefully remove it.
+                    </li>
+
+                    <li>
+                        Do not blindly push your fingers deep into
+                        the mouth or throat.
+                    </li>
+
+                    <li>
+                        Seek emergency veterinary care immediately
+                        if breathing remains difficult.
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         BLEEDING
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="bleeding"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-droplet"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-critical">
+                    Urgent
+                </span>
+
+                <h2>
+                    Severe Bleeding
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Place clean gauze, a clean towel, or clean cloth
+                        over the wound.
+                    </li>
+
+                    <li>
+                        Apply steady, firm pressure.
+                    </li>
+
+                    <li>
+                        If blood soaks through, add more material on top
+                        instead of repeatedly removing the original layer.
+                    </li>
+
+                    <li>
+                        Keep the pet quiet and arrange urgent
+                        veterinary care.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="emergency-dont-box">
+
+                <h3>
+                    Avoid
+                </h3>
+
+                <ul>
+                    <li>Repeatedly checking underneath the dressing.</li>
+                    <li>Applying unknown powders or household remedies.</li>
+                    <li>Allowing the pet to run or walk unnecessarily.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         POISONING
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="poisoning"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-flask"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-critical">
+                    Emergency
+                </span>
+
+                <h2>
+                    Suspected Poisoning
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Move your pet away from the suspected substance
+                        if it is safe to do so.
+                    </li>
+
+                    <li>
+                        Keep the product container, label, medication
+                        packet, plant sample, or other identifying
+                        information.
+                    </li>
+
+                    <li>
+                        Contact a veterinarian immediately.
+                    </li>
+
+                    <li>
+                        Tell the veterinarian what the substance was,
+                        approximately how much may have been involved,
+                        and when the exposure happened.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="emergency-dont-box">
+
+                <h3>
+                    Do not
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Do not induce vomiting unless a veterinarian
+                        specifically instructs you to.
+                    </li>
+
+                    <li>
+                        Do not give medicines or home remedies unless
+                        directed by a veterinary professional.
+                    </li>
+
+                    <li>
+                        Do not wait for symptoms if you know a potentially
+                        dangerous substance was swallowed.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         SEIZURE
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="seizure"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-warning">
+                    Protect from injury
+                </span>
+
+                <h2>
+                    Seizure
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Move objects away that could injure the pet.
+                    </li>
+
+                    <li>
+                        Keep the area quiet and reduce stimulation.
+                    </li>
+
+                    <li>
+                        Note how long the seizure lasts.
+                    </li>
+
+                    <li>
+                        Contact a veterinarian after the seizure and seek
+                        urgent care for prolonged or repeated seizures.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="emergency-dont-box">
+
+                <h3>
+                    Do not
+                </h3>
+
+                <ul>
+
+                    <li>Do not restrain the pet forcefully.</li>
+
+                    <li>
+                        Do not place your hands or any object
+                        inside the pet's mouth.
+                    </li>
+
+                    <li>
+                        Keep your face and hands away from the mouth
+                        during and immediately after the seizure.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         HEATSTROKE
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="heatstroke"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-temperature-high"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-critical">
+                    Emergency
+                </span>
+
+                <h2>
+                    Heatstroke
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+            <div>
+
+                <h3>
+                    Possible signs
+                </h3>
+
+                <ul>
+
+                    <li>Heavy or excessive panting</li>
+                    <li>Drooling</li>
+                    <li>Weakness or wobbliness</li>
+                    <li>Difficulty breathing</li>
+                    <li>Vomiting or diarrhea</li>
+                    <li>Collapse or seizures</li>
+
+                </ul>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Move the pet out of direct heat immediately.
+                    </li>
+
+                    <li>
+                        Begin cooling with cool water.
+                    </li>
+
+                    <li>
+                        Use airflow from a fan if available.
+                    </li>
+
+                    <li>
+                        Avoid ice or extremely cold water.
+                    </li>
+
+                    <li>
+                        Arrange veterinary treatment immediately,
+                        even if the pet appears to improve.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         BURNS
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="burns"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-fire-flame-curved"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-warning">
+                    Veterinary assessment
+                </span>
+
+                <h2>
+                    Burns
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Remove the pet from the source of the burn
+                        if it is safe.
+                    </li>
+
+                    <li>
+                        For a thermal burn, gently cool the affected
+                        area with cool water.
+                    </li>
+
+                    <li>
+                        Keep the area clean and prevent licking if possible.
+                    </li>
+
+                    <li>
+                        Contact a veterinarian, particularly for extensive,
+                        deep, electrical, or chemical burns.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="emergency-dont-box">
+
+                <h3>
+                    Avoid
+                </h3>
+
+                <ul>
+                    <li>Ice directly on damaged skin.</li>
+                    <li>Butter, oils, creams, or household remedies.</li>
+                    <li>Breaking blisters.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         FRACTURE / TRAUMA
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="trauma"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-bone"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-critical">
+                    Urgent
+                </span>
+
+                <h2>
+                    Fracture or Serious Trauma
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Keep the pet as still and calm as possible.
+                    </li>
+
+                    <li>
+                        Support the body when moving the pet.
+                    </li>
+
+                    <li>
+                        A firm board, carrier base, or other stable
+                        surface may help during transport.
+                    </li>
+
+                    <li>
+                        Seek veterinary care immediately after serious
+                        falls, vehicle accidents, or major trauma.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="emergency-dont-box">
+
+                <h3>
+                    Do not
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Do not attempt to straighten a suspected
+                        broken bone.
+                    </li>
+
+                    <li>
+                        Do not force the pet to stand or walk.
+                    </li>
+
+                    <li>
+                        Avoid twisting the neck or spine during transport.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         COLLAPSE
+         ====================================================== -->
+
+    <div
+        class="emergency-detail-card reveal"
+        id="collapse"
+    >
+
+        <div class="emergency-detail-header">
+
+            <span class="emergency-detail-icon">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </span>
+
+            <div>
+
+                <span class="emergency-level emergency-level-critical">
+                    Emergency
+                </span>
+
+                <h2>
+                    Collapse or Unconsciousness
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="emergency-detail-columns">
+
+            <div>
+
+                <h3>
+                    What to do
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Check whether the pet appears to be breathing.
+                    </li>
+
+                    <li>
+                        Keep the airway area clear and avoid unnecessary
+                        movement.
+                    </li>
+
+                    <li>
+                        Transport the pet carefully, supporting the
+                        head, neck, and body.
+                    </li>
+
+                    <li>
+                        Seek emergency veterinary attention immediately.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Important
+                </h3>
+
+                <p class="emergency-note-text">
+                    Sudden collapse or unconsciousness should always
+                    be treated as a serious medical emergency.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         TRANSPORT GUIDE
+         ====================================================== -->
+
+    <div class="emergency-transport-card reveal">
+
+        <div>
+
+            <span class="page-kicker">
+                Safe transport
+            </span>
+
+            <h2>
+                Getting your pet to veterinary care
+            </h2>
+
+            <p>
+                Injured pets may be frightened or painful. Handle them
+                slowly and avoid unnecessary movement.
+            </p>
+
+        </div>
+
+
+        <div class="emergency-transport-list">
+
+            <span>
+                <i class="fa-solid fa-check"></i>
+                Use a carrier for smaller pets when possible.
+            </span>
+
+            <span>
+                <i class="fa-solid fa-check"></i>
+                Support the head and body after major trauma.
+            </span>
+
+            <span>
+                <i class="fa-solid fa-check"></i>
+                Keep the environment quiet during transport.
+            </span>
+
+            <span>
+                <i class="fa-solid fa-check"></i>
+                Call the clinic ahead when possible.
+            </span>
+
+        </div>
+
+
+        <a
+            href="{% url 'nearby_vets' %}"
+            class="pet-btn pet-btn-primary"
+        >
+            <i class="fa-solid fa-location-dot"></i>
+            Find Nearby Pet Services
+        </a>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         FINAL DISCLAIMER
+         ====================================================== -->
+
+    <div class="emergency-disclaimer reveal">
+
+        <i class="fa-solid fa-circle-info"></i>
+
+        <p>
+            PetCare Portal provides general first-aid information only.
+            Diagnosis and treatment should be provided by a qualified
+            veterinary professional.
+        </p>
+
+    </div>
+
+
+</div>
+
+</section>
+
+{% endblock %}

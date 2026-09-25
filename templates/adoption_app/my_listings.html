@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Adoption Listings | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <div class="pet-page-header">
+
+        <div>
+
+            <a
+                href="{% url 'adoption_browse' %}"
+                class="back-link"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Adoption
+            </a>
+
+
+            <span class="page-kicker d-block mt-4">
+                My activity
+            </span>
+
+
+            <h1 class="page-title">
+                My Adoption Listings
+            </h1>
+
+
+            <p class="page-description">
+                Manage your active and previous adoption listings.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'adoption_create' %}"
+            class="pet-btn pet-btn-primary"
+        >
+            <i class="fa-solid fa-plus"></i>
+            New listing
+        </a>
+
+    </div>
+
+
+
+    {% if listings %}
+
+        <div class="row g-4">
+
+            {% for listing in listings %}
+
+                <div class="col-md-6 col-xl-4">
+
+                    <a
+                        href="{% url 'adoption_detail' listing.listing_id %}"
+                        class="adoption-card reveal"
+                    >
+
+                        <div class="adoption-card-photo">
+
+                            {% if listing.pet.photo %}
+
+                                <img
+                                    src="{{ listing.pet.photo.url }}"
+                                    alt="{{ listing.pet.name }}"
+                                >
+
+                            {% else %}
+
+                                <div class="adoption-placeholder">
+                                    🐾
+                                </div>
+
+                            {% endif %}
+
+
+                            <span
+                                class="
+                                    adoption-status
+                                    status-{{ listing.listing_status|lower }}
+                                "
+                            >
+                                {{ listing.get_listing_status_display }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="adoption-card-body">
+
+                            <h3>
+                                {{ listing.pet.name }}
+                            </h3>
+
+                            <div class="adoption-location">
+
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ listing.location }}
+
+                            </div>
+
+
+                            <p class="adoption-description">
+                                {{ listing.description|truncatechars:110 }}
+                            </p>
+
+
+                            <div class="adoption-card-footer">
+
+                                <span>
+                                    {{ listing.listed_at|date:"M d, Y" }}
+                                </span>
+
+                                <strong>
+                                    Manage
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="pet-empty-large reveal">
+
+            <div class="pet-empty-illustration">
+                🏡
+            </div>
+
+            <h2>
+                No adoption listings yet
+            </h2>
+
+            <p>
+                You haven't listed any of your pets for adoption.
+            </p>
+
+            <a
+                href="{% url 'adoption_create' %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Create listing
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+{% endblock %}

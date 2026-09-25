@@ -1,0 +1,1646 @@
+{% extends "base.html" %}
+
+{% block title %}
+Nearby Pet Services | PetCare Portal
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page nearby-vets-page">
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <div class="pet-page-header reveal">
+
+            <div>
+
+                <span class="page-kicker">
+                    Local pet care
+                </span>
+
+                <h1 class="page-title">
+                    Nearby Pet Services
+                </h1>
+
+                <p class="page-description">
+                    Find veterinary clinics and pet food & accessories shops
+                    near your current location.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="findVetsButton"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-location-crosshairs"></i>
+                Use my location
+            </button>
+
+        </div>
+
+
+        <!-- LOCATION PRIVACY -->
+
+        <div class="vet-location-note reveal">
+
+            <div class="vet-location-note-icon">
+                <i class="fa-solid fa-location-dot"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Your location is not saved
+                </strong>
+
+                <p>
+                    Your browser location is used only to find nearby
+                    pet services. It is not stored in your account.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICE TYPE -->
+
+        <div class="nearby-service-tabs reveal">
+
+            <button
+                type="button"
+                class="nearby-service-tab active"
+                data-service="VETS"
+            >
+                <i class="fa-solid fa-stethoscope"></i>
+
+                <span>
+                    Vets
+                </span>
+            </button>
+
+
+            <button
+                type="button"
+                class="nearby-service-tab"
+                data-service="SHOPS"
+            >
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                <span>
+                    Pet Food & Accessories
+                </span>
+            </button>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="vet-search-controls reveal">
+
+            <div>
+
+                <label for="vetRadius">
+                    Search distance
+                </label>
+
+                <select
+                    id="vetRadius"
+                    class="form-select pet-input"
+                >
+
+                    <option value="5000">
+                        Within 5 km
+                    </option>
+
+                    <option value="10000" selected>
+                        Within 10 km
+                    </option>
+
+                    <option value="15000">
+                        Within 15 km
+                    </option>
+
+                    <option value="20000">
+                        Within 20 km
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                id="vetStatus"
+                class="vet-status-text"
+            >
+                Click “Use my location” to begin.
+            </div>
+
+        </div>
+
+
+        <!-- RESULTS + MAP -->
+
+        <div class="nearby-vets-layout">
+
+
+            <!-- RESULT PANEL -->
+
+            <div class="vet-results-panel">
+
+                <div class="vet-results-header">
+
+                    <div>
+
+                        <span
+                            class="page-kicker"
+                            id="resultKicker"
+                        >
+                            Nearby vets
+                        </span>
+
+                        <h2 id="resultsTitle">
+                            Veterinary clinics
+                        </h2>
+
+                    </div>
+
+
+                    <span
+                        id="vetCount"
+                        class="pet-chip"
+                    >
+                        0 found
+                    </span>
+
+                </div>
+
+
+                <div id="vetResults">
+
+                    <div class="vet-initial-state">
+
+                        <div class="vet-empty-icon">
+                            <i class="fa-solid fa-stethoscope"></i>
+                        </div>
+
+                        <h3>
+                            Find services near you
+                        </h3>
+
+                        <p>
+                            Allow location access and nearby
+                            pet services will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MAP -->
+
+            <div class="vet-map-card">
+
+                <div id="vetMap"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<!-- GOOGLE MAPS LOADER -->
+
+<script>
+
+(g => {
+
+    var h, a, k,
+        p = "The Google Maps JavaScript API",
+        c = "google",
+        l = "importLibrary",
+        q = "__ib__",
+        m = document,
+        b = window;
+
+    b = b[c] || (b[c] = {});
+
+    var d = b.maps || (b.maps = {}),
+        r = new Set(),
+        e = new URLSearchParams(),
+
+        u = () => h || (
+            h = new Promise(async (f, n) => {
+
+                await (
+                    a = m.createElement("script")
+                );
+
+                e.set(
+                    "libraries",
+                    [...r] + ""
+                );
+
+                for (k in g) {
+
+                    e.set(
+                        k.replace(
+                            /[A-Z]/g,
+                            t => "_" + t[0].toLowerCase()
+                        ),
+                        g[k]
+                    );
+
+                }
+
+                e.set(
+                    "callback",
+                    c + ".maps." + q
+                );
+
+                a.src =
+                    `https://maps.${c}apis.com/maps/api/js?`
+                    + e;
+
+                d[q] = f;
+
+                a.onerror = () =>
+                    h = n(
+                        Error(
+                            p + " could not load."
+                        )
+                    );
+
+                m.head.append(a);
+
+            })
+        );
+
+
+    d[l]
+        ? console.warn(
+            p + " only loads once."
+        )
+        : d[l] = (
+            f,
+            ...n
+        ) =>
+            r.add(f)
+            &&
+            u().then(
+                () => d[l](
+                    f,
+                    ...n
+                )
+            );
+
+})({
+    key: "{{ google_maps_api_key|escapejs }}",
+    v: "weekly"
+});
+
+</script>
+
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+
+        /* =====================================================
+           GOOGLE LIBRARIES
+           ===================================================== */
+
+        const [
+            { Map, InfoWindow },
+            {
+                Place,
+                SearchNearbyRankPreference
+            },
+            {
+                AdvancedMarkerElement
+            }
+        ] = await Promise.all([
+
+            google.maps.importLibrary("maps"),
+
+            google.maps.importLibrary("places"),
+
+            google.maps.importLibrary("marker")
+
+        ]);
+
+
+        /* =====================================================
+           ELEMENTS
+           ===================================================== */
+
+        const findButton =
+            document.getElementById(
+                "findVetsButton"
+            );
+
+        const radiusElement =
+            document.getElementById(
+                "vetRadius"
+            );
+
+        const resultsElement =
+            document.getElementById(
+                "vetResults"
+            );
+
+        const statusElement =
+            document.getElementById(
+                "vetStatus"
+            );
+
+        const countElement =
+            document.getElementById(
+                "vetCount"
+            );
+
+        const resultsTitle =
+            document.getElementById(
+                "resultsTitle"
+            );
+
+        const resultKicker =
+            document.getElementById(
+                "resultKicker"
+            );
+
+        const serviceTabs =
+            document.querySelectorAll(
+                ".nearby-service-tab"
+            );
+
+
+        /* =====================================================
+           STATE
+           ===================================================== */
+
+        let selectedService = "VETS";
+
+        let userLocation = null;
+
+        let userMarker = null;
+
+        let serviceMarkers = [];
+
+
+        /*
+         * Nearby type gives us structured matches.
+         * Text queries help us catch businesses that Google
+         * categorizes differently.
+         */
+
+        const serviceConfiguration = {
+
+            VETS: {
+
+                title:
+                    "Veterinary clinics",
+
+                kicker:
+                    "Nearby vets",
+
+                nearbyTypes: [
+                    "veterinary_care"
+                ],
+
+                textQueries: [
+                    "veterinary clinic",
+                    "animal hospital",
+                    "vet clinic"
+                ],
+
+                loading:
+                    "Searching for nearby veterinary clinics...",
+
+                noResults:
+                    "No veterinary clinics found within this distance.",
+
+                icon:
+                    "fa-stethoscope"
+
+            },
+
+
+            SHOPS: {
+
+                title:
+                    "Pet Food & Accessories",
+
+                kicker:
+                    "Nearby pet shops",
+
+                nearbyTypes: [
+                    "pet_store"
+                ],
+
+                textQueries: [
+                    "pet shop",
+                    "pet food store",
+                    "pet accessories store"
+                ],
+
+                loading:
+                    "Searching for nearby pet shops...",
+
+                noResults:
+                    "No pet food or accessories shops found within this distance.",
+
+                icon:
+                    "fa-bag-shopping"
+
+            }
+
+        };
+
+
+        /* =====================================================
+           MAP
+           ===================================================== */
+
+        const defaultLocation = {
+
+            lat: 23.6850,
+            lng: 90.3563
+
+        };
+
+
+        const map =
+            new Map(
+                document.getElementById(
+                    "vetMap"
+                ),
+                {
+
+                    center:
+                        defaultLocation,
+
+                    zoom:
+                        7,
+
+                    mapId:
+                        "DEMO_MAP_ID",
+
+                    mapTypeControl:
+                        false,
+
+                    streetViewControl:
+                        false,
+
+                    fullscreenControl:
+                        true
+
+                }
+            );
+
+
+        const infoWindow =
+            new InfoWindow();
+
+
+        /* =====================================================
+           DISTANCE
+           ===================================================== */
+
+        function calculateDistance(
+            lat1,
+            lng1,
+            lat2,
+            lng2
+        ) {
+
+            const earthRadius =
+                6371;
+
+
+            const toRadians =
+                value =>
+                    value * Math.PI / 180;
+
+
+            const dLat =
+                toRadians(
+                    lat2 - lat1
+                );
+
+
+            const dLng =
+                toRadians(
+                    lng2 - lng1
+                );
+
+
+            const a =
+                Math.sin(
+                    dLat / 2
+                )
+                *
+                Math.sin(
+                    dLat / 2
+                )
+
+                +
+
+                Math.cos(
+                    toRadians(lat1)
+                )
+                *
+                Math.cos(
+                    toRadians(lat2)
+                )
+                *
+                Math.sin(
+                    dLng / 2
+                )
+                *
+                Math.sin(
+                    dLng / 2
+                );
+
+
+            const c =
+                2
+                *
+                Math.atan2(
+                    Math.sqrt(a),
+                    Math.sqrt(1 - a)
+                );
+
+
+            return (
+                earthRadius * c
+            );
+
+        }
+
+
+        /* =====================================================
+           SAFE TEXT
+           ===================================================== */
+
+        function escapeHtml(
+            value
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.textContent =
+                value || "";
+
+
+            return div.innerHTML;
+
+        }
+
+
+        /* =====================================================
+           CLEAR MARKERS
+           ===================================================== */
+
+        function clearServiceMarkers() {
+
+            serviceMarkers.forEach(
+                marker => {
+
+                    marker.map = null;
+
+                }
+            );
+
+
+            serviceMarkers = [];
+
+        }
+
+
+        /* =====================================================
+           RESULTS
+           ===================================================== */
+
+        function displayPlaces(
+            places
+        ) {
+
+            clearServiceMarkers();
+
+
+            const config =
+                serviceConfiguration[
+                    selectedService
+                ];
+
+
+            const resultItems =
+                places
+                    .filter(
+                        place =>
+                            place.location
+                    )
+                    .map(
+                        place => {
+
+                            const lat =
+                                place.location.lat();
+
+                            const lng =
+                                place.location.lng();
+
+
+                            return {
+
+                                place,
+                                lat,
+                                lng,
+
+                                distance:
+                                    calculateDistance(
+
+                                        userLocation.lat,
+                                        userLocation.lng,
+
+                                        lat,
+                                        lng
+
+                                    )
+
+                            };
+
+                        }
+                    )
+                    .sort(
+                        (a, b) =>
+                            a.distance
+                            -
+                            b.distance
+                    );
+
+
+            countElement.textContent =
+                `${resultItems.length} found`;
+
+
+            if (
+                !resultItems.length
+            ) {
+
+                resultsElement.innerHTML = `
+
+                    <div class="vet-initial-state">
+
+                        <div class="vet-empty-icon">
+
+                            <i class="fa-solid ${config.icon}"></i>
+
+                        </div>
+
+                        <h3>
+                            No results found
+                        </h3>
+
+                        <p>
+                            ${config.noResults}
+                            Try increasing the search distance.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            let html = "";
+
+
+            const bounds =
+                new google.maps.LatLngBounds();
+
+
+            bounds.extend(
+                userLocation
+            );
+
+
+            resultItems.forEach(
+                (
+                    item,
+                    index
+                ) => {
+
+
+                    const place =
+                        item.place;
+
+
+                    const name =
+                        escapeHtml(
+                            place.displayName
+                            ||
+                            (
+                                selectedService
+                                === "VETS"
+                                    ? "Veterinary clinic"
+                                    : "Pet shop"
+                            )
+                        );
+
+
+                    const address =
+                        escapeHtml(
+                            place.formattedAddress
+                            ||
+                            "Address not available"
+                        );
+
+
+                    const mapsUrl =
+                        place.googleMapsURI
+                        ||
+                        (
+                            "https://www.google.com/maps/search/?api=1&query="
+                            +
+                            item.lat
+                            +
+                            ","
+                            +
+                            item.lng
+                        );
+
+
+                    html += `
+
+                        <article class="vet-result-card">
+
+                            <div class="vet-result-number">
+
+                                ${index + 1}
+
+                            </div>
+
+
+                            <div class="vet-result-main">
+
+
+                                <div class="vet-result-title-row">
+
+                                    <h3>
+                                        ${name}
+                                    </h3>
+
+
+                                    <span class="vet-distance">
+
+                                        ${item.distance.toFixed(1)} km
+
+                                    </span>
+
+                                </div>
+
+
+                                <p class="vet-address">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    ${address}
+
+                                </p>
+
+
+                                <div class="vet-result-actions">
+
+
+                                    <button
+                                        type="button"
+                                        class="vet-map-focus"
+                                        data-lat="${item.lat}"
+                                        data-lng="${item.lng}"
+                                    >
+
+                                        <i class="fa-solid fa-map-pin"></i>
+
+                                        Show on map
+
+                                    </button>
+
+
+                                    <a
+                                        href="${mapsUrl}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="vet-directions-link"
+                                    >
+
+                                        <i class="fa-solid fa-diamond-turn-right"></i>
+
+                                        Open in Maps
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+
+                    const marker =
+                        new AdvancedMarkerElement({
+
+                            map:
+                                map,
+
+                            position: {
+
+                                lat:
+                                    item.lat,
+
+                                lng:
+                                    item.lng
+
+                            },
+
+                            title:
+                                place.displayName
+                                ||
+                                config.title
+
+                        });
+
+
+                    marker.addListener(
+                        "click",
+                        function () {
+
+
+                            const wrapper =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            const title =
+                                document.createElement(
+                                    "strong"
+                                );
+
+
+                            title.textContent =
+                                place.displayName
+                                ||
+                                config.title;
+
+
+                            const addressLine =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            addressLine.textContent =
+                                place.formattedAddress
+                                ||
+                                "";
+
+
+                            const distanceLine =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            distanceLine.textContent =
+                                item.distance.toFixed(1)
+                                +
+                                " km away";
+
+
+                            wrapper.append(
+                                title,
+                                addressLine,
+                                distanceLine
+                            );
+
+
+                            infoWindow.setContent(
+                                wrapper
+                            );
+
+
+                            infoWindow.open({
+
+                                map:
+                                    map,
+
+                                anchor:
+                                    marker
+
+                            });
+
+                        }
+                    );
+
+
+                    serviceMarkers.push(
+                        marker
+                    );
+
+
+                    bounds.extend({
+
+                        lat:
+                            item.lat,
+
+                        lng:
+                            item.lng
+
+                    });
+
+                }
+            );
+
+
+            resultsElement.innerHTML =
+                html;
+
+
+            document
+                .querySelectorAll(
+                    ".vet-map-focus"
+                )
+                .forEach(
+                    button => {
+
+
+                        button.addEventListener(
+                            "click",
+                            function () {
+
+
+                                const lat =
+                                    Number(
+                                        this.dataset.lat
+                                    );
+
+
+                                const lng =
+                                    Number(
+                                        this.dataset.lng
+                                    );
+
+
+                                map.panTo({
+
+                                    lat,
+                                    lng
+
+                                });
+
+
+                                map.setZoom(
+                                    16
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            map.fitBounds(
+                bounds,
+                70
+            );
+
+        }
+
+
+        /* =====================================================
+           SEARCH
+           ===================================================== */
+
+        async function searchNearbyServices() {
+
+            if (
+                !userLocation
+            ) {
+                return;
+            }
+
+
+            const config =
+                serviceConfiguration[
+                    selectedService
+                ];
+
+
+            const radius =
+                Number(
+                    radiusElement.value
+                );
+
+
+            statusElement.innerHTML = `
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                ${config.loading}
+
+            `;
+
+
+            resultsElement.innerHTML = `
+
+                <div class="vet-loading-state">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    <p>
+                        ${config.loading}
+                    </p>
+
+                </div>
+
+            `;
+
+
+            try {
+
+
+                /* ---------------------------------------------
+                   STRUCTURED NEARBY SEARCH
+                   --------------------------------------------- */
+
+                const nearbyRequest = {
+
+                    fields: [
+                        "id",
+                        "displayName",
+                        "location",
+                        "formattedAddress",
+                        "googleMapsURI"
+                    ],
+
+
+                    locationRestriction: {
+
+                        center:
+                            userLocation,
+
+                        radius:
+                            radius
+
+                    },
+
+
+                    includedTypes:
+                        config.nearbyTypes,
+
+
+                    maxResultCount:
+                        20,
+
+
+                    rankPreference:
+                        SearchNearbyRankPreference.DISTANCE
+
+                };
+
+
+                const nearbyResponse =
+                    await Place.searchNearby(
+                        nearbyRequest
+                    );
+
+
+                /* ---------------------------------------------
+                   TEXT SEARCH FALLBACKS
+                   --------------------------------------------- */
+
+                const textResponses =
+                    await Promise.all(
+
+                        config.textQueries.map(
+                            query =>
+
+                                Place.searchByText({
+
+                                    textQuery:
+                                        query,
+
+                                    fields: [
+                                        "id",
+                                        "displayName",
+                                        "location",
+                                        "formattedAddress",
+                                        "googleMapsURI"
+                                    ],
+
+                                    locationBias: {
+
+                                        center:
+                                            userLocation,
+
+                                        radius:
+                                            radius
+
+                                    },
+
+                                    maxResultCount:
+                                        20
+
+                                })
+
+                        )
+
+                    );
+
+
+                /* ---------------------------------------------
+                   MERGE
+                   --------------------------------------------- */
+
+                const combinedPlaces = [
+
+                    ...nearbyResponse.places
+
+                ];
+
+
+                textResponses.forEach(
+                    response => {
+
+                        combinedPlaces.push(
+                            ...response.places
+                        );
+
+                    }
+                );
+
+
+                /* ---------------------------------------------
+                   REMOVE DUPLICATES
+                   --------------------------------------------- */
+
+                const uniquePlaces =
+                    [];
+
+
+                const seenPlaces =
+                    new Set();
+
+
+                combinedPlaces.forEach(
+                    place => {
+
+
+                        if (
+                            !place.location
+                        ) {
+                            return;
+                        }
+
+
+                        const key =
+                            place.id
+                            ||
+                            (
+                                place.displayName
+                                +
+                                "-"
+                                +
+                                place.location.lat()
+                                +
+                                "-"
+                                +
+                                place.location.lng()
+                            );
+
+
+                        if (
+                            seenPlaces.has(
+                                key
+                            )
+                        ) {
+                            return;
+                        }
+
+
+                        seenPlaces.add(
+                            key
+                        );
+
+
+                        uniquePlaces.push(
+                            place
+                        );
+
+                    }
+                );
+
+
+                /* ---------------------------------------------
+                   FORCE RADIUS
+                   --------------------------------------------- */
+
+                const filteredPlaces =
+                    uniquePlaces.filter(
+                        place => {
+
+
+                            const distanceKm =
+                                calculateDistance(
+
+                                    userLocation.lat,
+                                    userLocation.lng,
+
+                                    place.location.lat(),
+                                    place.location.lng()
+
+                                );
+
+
+                            return (
+                                distanceKm * 1000
+                                <=
+                                radius
+                            );
+
+                        }
+                    );
+
+
+                statusElement.textContent =
+
+                    selectedService === "VETS"
+
+                    ? "Showing veterinary clinics near your current location."
+
+                    : "Showing pet food & accessories shops near your current location.";
+
+
+                displayPlaces(
+                    filteredPlaces
+                );
+
+
+            } catch (
+                error
+            ) {
+
+
+                console.error(
+                    "Nearby services search error:",
+                    error
+                );
+
+
+                statusElement.textContent =
+                    "Unable to search for nearby pet services.";
+
+
+                resultsElement.innerHTML = `
+
+                    <div class="vet-initial-state">
+
+                        <div class="vet-empty-icon">
+
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        </div>
+
+                        <h3>
+                            Search unavailable
+                        </h3>
+
+                        <p>
+                            Google Places could not complete the search.
+                            Check the browser console for details.
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           SERVICE TABS
+           ===================================================== */
+
+        serviceTabs.forEach(
+            tab => {
+
+
+                tab.addEventListener(
+                    "click",
+                    function () {
+
+
+                        serviceTabs.forEach(
+                            item =>
+                                item.classList.remove(
+                                    "active"
+                                )
+                        );
+
+
+                        this.classList.add(
+                            "active"
+                        );
+
+
+                        selectedService =
+                            this.dataset.service;
+
+
+                        const config =
+                            serviceConfiguration[
+                                selectedService
+                            ];
+
+
+                        resultsTitle.textContent =
+                            config.title;
+
+
+                        resultKicker.textContent =
+                            config.kicker;
+
+
+                        countElement.textContent =
+                            "0 found";
+
+
+                        if (
+                            userLocation
+                        ) {
+
+                            searchNearbyServices();
+
+                        } else {
+
+
+                            resultsElement.innerHTML = `
+
+                                <div class="vet-initial-state">
+
+                                    <div class="vet-empty-icon">
+
+                                        <i class="fa-solid ${config.icon}"></i>
+
+                                    </div>
+
+                                    <h3>
+                                        Find services near you
+                                    </h3>
+
+                                    <p>
+                                        Click “Use my location” to search.
+                                    </p>
+
+                                </div>
+
+                            `;
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           GEOLOCATION
+           ===================================================== */
+
+        findButton.addEventListener(
+            "click",
+            function () {
+
+
+                if (
+                    !navigator.geolocation
+                ) {
+
+
+                    statusElement.textContent =
+                        "This browser does not support geolocation.";
+
+
+                    return;
+
+                }
+
+
+                findButton.disabled =
+                    true;
+
+
+                findButton.innerHTML = `
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    Finding location...
+
+                `;
+
+
+                navigator.geolocation.getCurrentPosition(
+
+
+                    async function (
+                        position
+                    ) {
+
+
+                        userLocation = {
+
+                            lat:
+                                position.coords.latitude,
+
+                            lng:
+                                position.coords.longitude
+
+                        };
+
+
+                        if (
+                            userMarker
+                        ) {
+
+                            userMarker.map =
+                                null;
+
+                        }
+
+
+                        userMarker =
+                            new AdvancedMarkerElement({
+
+                                map:
+                                    map,
+
+                                position:
+                                    userLocation,
+
+                                title:
+                                    "Your location"
+
+                            });
+
+
+                        map.setCenter(
+                            userLocation
+                        );
+
+
+                        map.setZoom(
+                            14
+                        );
+
+
+                        findButton.disabled =
+                            false;
+
+
+                        findButton.innerHTML = `
+
+                            <i class="fa-solid fa-location-crosshairs"></i>
+
+                            Refresh location
+
+                        `;
+
+
+                        await searchNearbyServices();
+
+                    },
+
+
+                    function (
+                        error
+                    ) {
+
+
+                        findButton.disabled =
+                            false;
+
+
+                        findButton.innerHTML = `
+
+                            <i class="fa-solid fa-location-crosshairs"></i>
+
+                            Use my location
+
+                        `;
+
+
+                        if (
+                            error.code
+                            ===
+                            error.PERMISSION_DENIED
+                        ) {
+
+
+                            statusElement.textContent =
+                                "Location permission was denied. Allow location access in your browser and try again.";
+
+
+                        } else {
+
+
+                            statusElement.textContent =
+                                "Your location could not be determined. Please try again.";
+
+                        }
+
+                    },
+
+
+                    {
+
+                        enableHighAccuracy:
+                            true,
+
+                        timeout:
+                            10000,
+
+                        maximumAge:
+                            60000
+
+                    }
+
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+           RADIUS
+           ===================================================== */
+
+        radiusElement.addEventListener(
+            "change",
+            function () {
+
+
+                if (
+                    userLocation
+                ) {
+
+                    searchNearbyServices();
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

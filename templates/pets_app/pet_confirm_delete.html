@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% blocktrans with name=pet.name %}Delete {{ name }}{% endblocktrans %}
+    | PetCare Portal
+{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-6">
+
+                <div class="delete-card reveal">
+
+                    <div class="delete-icon">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </div>
+
+
+                    <span class="page-kicker">
+                        {% trans "Delete pet" %}
+                    </span>
+
+
+                    <h1>
+                        {% blocktrans with name=pet.name %}
+                            Remove {{ name }}?
+                        {% endblocktrans %}
+                    </h1>
+
+
+                    <p>
+                        {% blocktrans with name=pet.name %}
+                            This will permanently remove <strong>{{ name }}</strong> from your PetCare account.
+                        {% endblocktrans %}
+                    </p>
+
+
+                    <div class="delete-warning">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <span>
+                            {% trans "Future health records, vaccinations, reminders and growth information connected to this pet will also be affected." %}
+                        </span>
+
+                    </div>
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <div class="delete-actions">
+
+                            <a
+                                href="{% url 'pet_detail' pet.pet_id %}"
+                                class="pet-btn pet-btn-secondary"
+                            >
+                                {% blocktrans with name=pet.name %}
+                                    Keep {{ name }}
+                                {% endblocktrans %}
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="danger-button"
+                            >
+
+                                <i class="fa-solid fa-trash me-2"></i>
+
+                                {% trans "Delete permanently" %}
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

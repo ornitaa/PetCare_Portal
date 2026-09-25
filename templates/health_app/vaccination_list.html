@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}
+Vaccinations | {{ pet.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <a
+        href="{% url 'pet_detail' pet.pet_id %}"
+        class="back-link"
+    >
+        <i class="fa-solid fa-arrow-left"></i>
+        {{ pet.name }}'s profile
+    </a>
+
+
+    <div class="pet-page-header mt-4">
+
+        <div>
+
+            <span class="page-kicker">
+                Preventive care
+            </span>
+
+            <h1 class="page-title">
+                Vaccinations
+            </h1>
+
+            <p class="page-description">
+                Keep {{ pet.name }}'s vaccination history
+                and future due dates organized.
+            </p>
+
+        </div>
+
+
+        <div class="action-group">
+
+            <a
+                href="{% url 'vaccination_add' pet.pet_id %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Add vaccination
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% if vaccinations %}
+
+        <div class="row g-4">
+
+            {% for vaccination in vaccinations %}
+
+                <div class="col-lg-6">
+
+                    <div class="vaccine-card reveal">
+
+                        <div class="vaccine-card-icon">
+                            <i class="fa-solid fa-syringe"></i>
+                        </div>
+
+
+                        <div class="vaccine-card-main">
+
+                            <div class="vaccine-title-row">
+
+                                <div>
+
+                                    <h3>
+                                        {{ vaccination.vaccine_name }}
+                                    </h3>
+
+                                    {% if vaccination.dose_label %}
+                                        <span class="vaccine-dose">
+                                            {{ vaccination.dose_label }}
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="vaccine-actions">
+
+                                    <a
+                                        href="{% url 'vaccination_edit' pet.pet_id vaccination.vaccination_id %}"
+                                        title="Edit"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+
+                                    <a
+                                        href="{% url 'vaccination_delete' pet.pet_id vaccination.vaccination_id %}"
+                                        title="Delete"
+                                        class="vaccine-delete"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="vaccine-date-grid">
+
+                                <div>
+
+                                    <small>
+                                        Administered
+                                    </small>
+
+                                    <strong>
+                                        {{ vaccination.administered_on|date:"M d, Y" }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <small>
+                                        Next due
+                                    </small>
+
+                                    <strong>
+
+                                        {% if vaccination.next_due_on %}
+                                            {{ vaccination.next_due_on|date:"M d, Y" }}
+                                        {% else %}
+                                            Not scheduled
+                                        {% endif %}
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            {% if vaccination.clinic_name %}
+
+                                <div class="vaccine-clinic">
+
+                                    <i class="fa-solid fa-house-medical"></i>
+
+                                    {{ vaccination.clinic_name }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if vaccination.notes %}
+
+                                <p class="vaccine-notes">
+                                    {{ vaccination.notes }}
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="pet-empty-large reveal">
+
+            <div class="pet-empty-illustration">
+                💉
+            </div>
+
+            <span class="page-kicker">
+                Vaccination history
+            </span>
+
+            <h2>
+                No vaccinations recorded
+            </h2>
+
+            <p>
+                Add {{ pet.name }}'s first vaccination
+                to start tracking vaccine history and
+                future due dates.
+            </p>
+
+            <a
+                href="{% url 'vaccination_add' pet.pet_id %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Add first vaccination
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+{% endblock %}

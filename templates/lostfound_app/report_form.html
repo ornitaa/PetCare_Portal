@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ page_title }} | PetCare
+{% endblock %}
+
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-xl-9">
+
+    <div class="health-form-card reveal">
+
+        <a
+            href="{% url 'report_overview' %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Lost & Found
+        </a>
+
+
+        <span class="page-kicker d-block mt-4">
+            Pet safety
+        </span>
+
+
+        <h1 class="health-form-title">
+            {{ page_title }}
+        </h1>
+
+
+        <p class="text-muted">
+            Provide clear information so other pet owners
+            can recognize the animal and location.
+        </p>
+
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="mt-4"
+        >
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="alert alert-danger pet-alert">
+
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Report type
+                    </label>
+
+                    {{ form.report_type }}
+
+                    {% for error in form.report_type.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Your registered pet
+                    </label>
+
+                    {{ form.pet }}
+
+                    <div class="form-hint">
+                        Required for a lost report.
+                        Leave empty for a found pet.
+                    </div>
+
+                    {% for error in form.pet.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-md-7">
+
+                    <label class="form-label">
+                        Location
+                    </label>
+
+                    {{ form.location }}
+
+                    {% for error in form.location.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-md-5">
+
+                    <label class="form-label">
+                        Date & time
+                    </label>
+
+                    {{ form.incident_at }}
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                    {% for error in form.description.errors %}
+                        <div class="form-error">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Photo
+                    </label>
+
+                    {{ form.photo }}
+
+                    <div class="form-hint">
+                        A clear image greatly improves recognition.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="clean-action-bar">
+
+                <a
+                    href="{% url 'report_overview' %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="pet-btn pet-btn-primary"
+                >
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    {{ button_text }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

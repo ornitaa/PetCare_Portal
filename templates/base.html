@@ -1,0 +1,1047 @@
+{% load static i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<!DOCTYPE html>
+<html lang="{{ CURRENT_LANGUAGE }}">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            PetCare Portal
+        {% endblock %}
+    </title>
+
+
+    <!-- ======================================================
+         GOOGLE FONTS
+         ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- ======================================================
+         BOOTSTRAP
+         ====================================================== -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- ======================================================
+         FONT AWESOME
+         ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    >
+
+
+    <!-- ======================================================
+         CUSTOM CSS
+         ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/petcare.css' %}"
+    >
+
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================================
+     GLOBAL CSRF TOKEN
+     Needed for Firebase device registration POST
+     ========================================================== -->
+
+{% if request.user.is_authenticated %}
+
+<form
+    id="petcareCsrfForm"
+    style="display: none;"
+>
+    {% csrf_token %}
+</form>
+
+{% endif %}
+
+
+
+<!-- ==========================================================
+     NAVBAR
+     ========================================================== -->
+
+<nav class="navbar navbar-expand-lg pet-navbar">
+
+    <div class="container">
+
+
+        <!-- BRAND -->
+
+        <a
+            class="navbar-brand pet-brand"
+            href="{% url 'home' %}"
+        >
+
+            <span class="brand-icon">
+                <i class="fa-solid fa-paw"></i>
+            </span>
+
+            <span>
+                PetCare Portal
+            </span>
+
+        </a>
+
+
+
+        <!-- MOBILE TOGGLER -->
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#petNavbar"
+            aria-controls="petNavbar"
+            aria-expanded="false"
+            aria-label="{% trans 'Toggle navigation' %}"
+        >
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+
+        <!-- NAV LINKS -->
+
+        <div
+            class="collapse navbar-collapse"
+            id="petNavbar"
+        >
+
+            <div
+                class="navbar-nav ms-auto align-items-lg-center gap-lg-2"
+            >
+
+                {% if request.user.is_authenticated %}
+
+
+                    <a
+                        href="{% url 'dashboard' %}"
+                        class="nav-link pet-nav-link"
+                    >
+                        {% trans "Dashboard" %}
+                    </a>
+
+
+                    <a
+                        href="{% url 'nearby_vets' %}"
+                        class="nav-link pet-nav-link"
+                    >
+                        {% trans "Pet Services" %}
+                    </a>
+
+
+                    <a
+                        href="{% url 'community_feed' %}"
+                        class="nav-link pet-nav-link"
+                    >
+                        {% trans "Community" %}
+                    </a>
+
+
+                    <!-- EXPLORE DROPDOWN -->
+
+                    <div class="nav-item dropdown">
+
+                        <button
+                            class="pet-nav-dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+                            {% trans "Explore" %}
+
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+
+
+                        <ul class="dropdown-menu pet-nav-dropdown-menu">
+
+                            <li>
+                                <a
+                                    href="{% url 'report_overview' %}"
+                                    class="dropdown-item"
+                                >
+                                    <i class="fa-solid fa-magnifying-glass-location"></i>
+                                    {% trans "Lost & Found" %}
+                                </a>
+                            </li>
+
+
+                            <li>
+                                <a
+                                    href="{% url 'adoption_browse' %}"
+                                    class="dropdown-item"
+                                >
+                                    <i class="fa-solid fa-heart"></i>
+                                    {% trans "Adoption" %}
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+
+                    <!-- EMERGENCY -->
+
+                    <a
+                        href="{% url 'emergency_guide' %}"
+                        class="pet-emergency-pill"
+                    >
+                        <i class="fa-solid fa-kit-medical"></i>
+                        {% trans "Emergency" %}
+                    </a>
+
+
+                    <!-- LANGUAGE SWITCHER -->
+
+                    <form
+                        action="{% url 'set_language' %}"
+                        method="post"
+                        class="pet-language-switcher"
+                    >
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="next"
+                            value="{{ request.get_full_path }}"
+                        >
+
+                        {% if CURRENT_LANGUAGE == "bn" %}
+
+                            <button
+                                type="submit"
+                                name="language"
+                                value="en"
+                                class="pet-language-btn"
+                                title="Switch to English"
+                                aria-label="Switch to English"
+                            >
+                                <i class="fa-solid fa-language"></i>
+                                EN
+                            </button>
+
+                        {% else %}
+
+                            <button
+                                type="submit"
+                                name="language"
+                                value="bn"
+                                class="pet-language-btn"
+                                title="বাংলায় দেখুন"
+                                aria-label="বাংলায় দেখুন"
+                            >
+                                <i class="fa-solid fa-language"></i>
+                                বাংলা
+                            </button>
+
+                        {% endif %}
+
+                    </form>
+
+
+                    <!-- ACCOUNT DROPDOWN -->
+
+                    <div class="nav-item dropdown pet-account-dropdown">
+
+                        <button
+                            class="pet-account-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+
+                            <span class="pet-navbar-avatar">
+                                {{ request.user.full_name|slice:":1"|upper }}
+                            </span>
+
+                            <span class="pet-navbar-user">
+                                {{ request.user.full_name }}
+                            </span>
+
+                            <i class="fa-solid fa-chevron-down"></i>
+
+                        </button>
+
+
+                        <ul class="dropdown-menu dropdown-menu-end pet-account-menu">
+
+                            <li>
+
+                                <div class="pet-account-menu-header">
+
+                                    <span class="pet-account-menu-avatar">
+                                        {{ request.user.full_name|slice:":1"|upper }}
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            {{ request.user.full_name }}
+                                        </strong>
+
+                                        <span>
+                                            {{ request.user.email }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </li>
+
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+
+                            <li>
+                                <a
+                                    href="{% url 'account_profile' %}"
+                                    class="dropdown-item pet-account-menu-item"
+                                >
+                                    <i class="fa-regular fa-user"></i>
+                                    {% trans "My account" %}
+                                </a>
+                            </li>
+
+
+                            <li>
+                                <a
+                                    href="{% url 'account_edit' %}"
+                                    class="dropdown-item pet-account-menu-item"
+                                >
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                    {% trans "Edit profile" %}
+                                </a>
+                            </li>
+
+
+                            <li>
+                                <a
+                                    href="{% url 'notification_settings' %}"
+                                    class="dropdown-item pet-account-menu-item"
+                                >
+                                    <i class="fa-regular fa-bell"></i>
+                                    {% trans "Notifications" %}
+                                </a>
+                            </li>
+
+
+                            <li>
+                                <a
+                                    href="{% url 'password_change' %}"
+                                    class="dropdown-item pet-account-menu-item"
+                                >
+                                    <i class="fa-solid fa-key"></i>
+                                    {% trans "Change password" %}
+                                </a>
+                            </li>
+
+
+                            {% if request.user.is_staff %}
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                <li>
+                                    <a
+                                        href="{% url 'admin_dashboard' %}"
+                                        class="dropdown-item pet-account-menu-item pet-admin-menu-item"
+                                    >
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                        {% trans "Admin Dashboard" %}
+                                    </a>
+                                </li>
+
+                            {% endif %}
+
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+
+                            <li>
+                                <a
+                                    href="{% url 'logout' %}"
+                                    class="
+                                        dropdown-item
+                                        pet-account-menu-item
+                                        pet-account-logout
+                                    "
+                                >
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                    {% trans "Log out" %}
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+
+                {% else %}
+
+
+                    <a
+                        href="{% url 'login' %}"
+                        class="nav-link pet-nav-link"
+                    >
+                        {% trans "Login" %}
+                    </a>
+
+
+                    <a
+                        href="{% url 'register' %}"
+                        class="btn pet-btn pet-btn-primary nav-register-btn"
+                    >
+                        {% trans "Register" %}
+                    </a>
+
+
+                    <!-- LANGUAGE SWITCHER FOR GUESTS -->
+
+                    <form
+                        action="{% url 'set_language' %}"
+                        method="post"
+                        class="pet-language-switcher"
+                    >
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="next"
+                            value="{{ request.get_full_path }}"
+                        >
+
+                        {% if CURRENT_LANGUAGE == "bn" %}
+
+                            <button
+                                type="submit"
+                                name="language"
+                                value="en"
+                                class="pet-language-btn"
+                                title="Switch to English"
+                                aria-label="Switch to English"
+                            >
+                                <i class="fa-solid fa-language"></i>
+                                EN
+                            </button>
+
+                        {% else %}
+
+                            <button
+                                type="submit"
+                                name="language"
+                                value="bn"
+                                class="pet-language-btn"
+                                title="বাংলায় দেখুন"
+                                aria-label="বাংলায় দেখুন"
+                            >
+                                <i class="fa-solid fa-language"></i>
+                                বাংলা
+                            </button>
+
+                        {% endif %}
+
+                    </form>
+
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ==========================================================
+     DJANGO MESSAGES
+     ========================================================== -->
+
+{% if messages %}
+
+<div class="toast-wrap">
+
+    <div class="container">
+
+        {% for message in messages %}
+
+            <div
+                class="
+                    alert
+                    pet-alert
+                    alert-{{ message.tags }}
+                    alert-dismissible
+                    fade
+                    show
+                "
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="{% trans 'Close' %}"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- ==========================================================
+     PAGE CONTENT
+     ========================================================== -->
+
+<main>
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+
+<!-- ==========================================================
+     FOOTER
+     ========================================================== -->
+
+<footer class="pet-footer">
+
+    <div class="container">
+
+        <p class="mb-0">
+            PetCare Portal · {% trans "Caring made simpler for every pet parent" %}
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<!-- ==========================================================
+     BOOTSTRAP JS
+     ========================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+
+<!-- ==========================================================
+     PETCARE JS
+     ========================================================== -->
+
+<script
+    src="{% static 'js/petcare.js' %}"
+></script>
+
+
+{% block extra_js %}
+{% endblock %}
+
+
+
+<!-- ==========================================================
+     FIREBASE PUSH
+     Logged-in users only
+     ========================================================== -->
+
+{% if request.user.is_authenticated %}
+
+{% trans "PetCare Reminder" as default_reminder_title %}
+{% trans "You have a care reminder." as default_reminder_body %}
+
+<script type="module">
+
+import {
+    initializeApp,
+    getApps,
+    getApp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+import {
+    getMessaging,
+    onMessage,
+    onRegistered,
+    register,
+    isSupported
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
+
+
+
+(async function () {
+
+
+    console.log(
+        "[PetCare] Firebase foreground module loaded."
+    );
+
+
+    try {
+
+
+        /* ------------------------------------------------------
+           CHECK FIREBASE SUPPORT
+           ------------------------------------------------------ */
+
+        const supported =
+            await isSupported();
+
+
+        console.log(
+            "[PetCare] Firebase messaging supported:",
+            supported
+        );
+
+
+        if (!supported) {
+
+            console.warn(
+                "[PetCare] Firebase Messaging is not supported."
+            );
+
+            return;
+        }
+
+
+
+        /* ------------------------------------------------------
+           CHECK NOTIFICATION PERMISSION
+           ------------------------------------------------------ */
+
+        if (
+            Notification.permission !== "granted"
+        ) {
+
+            console.log(
+                "[PetCare] Notification permission:",
+                Notification.permission
+            );
+
+            return;
+        }
+
+
+
+        /* ------------------------------------------------------
+           FIREBASE CONFIG
+           ------------------------------------------------------ */
+
+        const firebaseConfig = {
+
+            apiKey:
+                "{{ firebase_api_key|escapejs }}",
+
+            authDomain:
+                "{{ firebase_auth_domain|escapejs }}",
+
+            projectId:
+                "{{ firebase_project_id|escapejs }}",
+
+            storageBucket:
+                "{{ firebase_storage_bucket|escapejs }}",
+
+            messagingSenderId:
+                "{{ firebase_messaging_sender_id|escapejs }}",
+
+            appId:
+                "{{ firebase_app_id|escapejs }}"
+        };
+
+
+        const vapidKey =
+            "{{ firebase_vapid_key|escapejs }}";
+
+
+        console.log(
+            "[PetCare] Firebase project:",
+            firebaseConfig.projectId
+        );
+
+
+
+        /* ------------------------------------------------------
+           INITIALIZE FIREBASE
+           ------------------------------------------------------ */
+
+        const firebaseApp =
+            getApps().length > 0
+                ? getApp()
+                : initializeApp(
+                    firebaseConfig
+                );
+
+
+        const messaging =
+            getMessaging(
+                firebaseApp
+            );
+
+
+
+        /* ------------------------------------------------------
+           REGISTER ROOT SERVICE WORKER
+           ------------------------------------------------------ */
+
+        const serviceWorkerRegistration =
+            await navigator
+                .serviceWorker
+                .register(
+                    "/firebase-messaging-sw.js"
+                );
+
+
+        console.log(
+            "[PetCare] Service worker ready:",
+            serviceWorkerRegistration.scope
+        );
+
+
+
+        /* ------------------------------------------------------
+           FIREBASE INSTALLATION REGISTRATION
+
+           IMPORTANT:
+           onRegistered must be attached BEFORE register().
+           ------------------------------------------------------ */
+
+        onRegistered(
+            messaging,
+            async function (installationId) {
+
+
+                console.log(
+                    "[PetCare] Firebase installation registered:",
+                    installationId
+                );
+
+
+                /*
+                 * Keep the current Firebase Installation ID
+                 * synchronized with Django.
+                 */
+
+                try {
+
+
+                    const csrfTokenElement =
+                        document.querySelector(
+                            "[name=csrfmiddlewaretoken]"
+                        );
+
+
+                    if (!csrfTokenElement) {
+
+                        throw new Error(
+                            "CSRF token was not found."
+                        );
+
+                    }
+
+
+                    const csrfToken =
+                        csrfTokenElement.value;
+
+
+
+                    const response =
+                        await fetch(
+                            "{% url 'register_push_device' %}",
+                            {
+
+                                method:
+                                    "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "X-CSRFToken":
+                                        csrfToken
+
+                                },
+
+                                credentials:
+                                    "same-origin",
+
+                                body:
+                                    JSON.stringify({
+
+                                        fid:
+                                            installationId,
+
+                                        device_name:
+                                            navigator
+                                                .userAgent
+                                                .substring(
+                                                    0,
+                                                    120
+                                                )
+
+                                    })
+
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Backend returned "
+                            + response.status
+                        );
+
+                    }
+
+
+                    const result =
+                        await response.json();
+
+
+                    console.log(
+                        "[PetCare] FID synchronized with Django:",
+                        result
+                    );
+
+
+                }
+
+                catch (syncError) {
+
+
+                    console.error(
+                        "[PetCare] Could not synchronize FID:",
+                        syncError
+                    );
+
+
+                }
+
+            }
+        );
+
+
+
+        /* ------------------------------------------------------
+           FOREGROUND MESSAGE LISTENER
+           ------------------------------------------------------ */
+
+        onMessage(
+            messaging,
+            async function (payload) {
+
+
+                console.log(
+                    "[PetCare] Foreground push received:",
+                    payload
+                );
+
+
+                const data =
+                    payload.data || {};
+
+
+                const firebaseNotification =
+                    payload.notification || {};
+
+
+                const title =
+                    firebaseNotification.title
+                    ||
+                    data.title
+                    ||
+                    "{{ default_reminder_title|escapejs }}";
+
+
+                const body =
+                    firebaseNotification.body
+                    ||
+                    data.body
+                    ||
+                    "{{ default_reminder_body|escapejs }}";
+
+
+
+                try {
+
+
+                    const registration =
+                        await navigator
+                            .serviceWorker
+                            .ready;
+
+
+                    await registration
+                        .showNotification(
+                            title,
+                            {
+
+                                body:
+                                    body,
+
+                                tag:
+                                    data.tag
+                                    ||
+                                    (
+                                        "petcare-reminder-"
+                                        + Date.now()
+                                    ),
+
+                                data: {
+
+                                    url:
+                                        data.url
+                                        ||
+                                        "/reminders/"
+
+                                }
+
+                            }
+                        );
+
+
+                    console.log(
+                        "[PetCare] Foreground notification displayed."
+                    );
+
+
+                }
+
+                catch (notificationError) {
+
+
+                    console.error(
+                        "[PetCare] Notification display failed:",
+                        notificationError
+                    );
+
+
+                }
+
+            }
+        );
+
+
+        console.log(
+            "[PetCare] Foreground notification listener attached."
+        );
+
+
+
+        /* ------------------------------------------------------
+           REGISTER CURRENT BROWSER WITH FCM
+
+           Must happen AFTER onRegistered()
+           ------------------------------------------------------ */
+
+        await register(
+            messaging,
+            {
+
+                vapidKey:
+                    vapidKey,
+
+                serviceWorkerRegistration:
+                    serviceWorkerRegistration
+
+            }
+        );
+
+
+        console.log(
+            "[PetCare] Foreground FCM registration completed."
+        );
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+            "[PetCare] Firebase foreground setup failed:",
+            error
+        );
+
+
+    }
+
+
+})();
+
+</script>
+
+{% endif %}
+
+
+</body>
+
+</html>

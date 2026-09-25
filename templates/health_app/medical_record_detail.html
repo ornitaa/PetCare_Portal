@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Medical Record | {{ pet.name }}{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+<div class="container">
+
+    <a
+        href="{% url 'medical_record_list' pet.pet_id %}"
+        class="back-link"
+    >
+        <i class="fa-solid fa-arrow-left"></i>
+        Medical records
+    </a>
+
+
+    <div class="medical-detail-card reveal">
+
+        <div class="medical-detail-header">
+
+            <div>
+
+                <span class="record-kind">
+                    {{ record.get_record_kind_display }}
+                </span>
+
+                <h1>
+                    {% if record.diagnosis %}
+                        {{ record.diagnosis }}
+                    {% else %}
+                        {{ record.get_record_kind_display }}
+                    {% endif %}
+                </h1>
+
+                <p>
+                    {{ record.recorded_on|date:"F d, Y" }}
+                </p>
+
+            </div>
+
+
+            <div class="action-group">
+
+                <a
+                    href="{% url 'medical_record_edit' pet.pet_id record.record_id %}"
+                    class="pet-btn pet-btn-secondary"
+                >
+                    <i class="fa-solid fa-pen"></i>
+                    Edit
+                </a>
+
+                <a
+                    href="{% url 'medical_record_delete' pet.pet_id record.record_id %}"
+                    class="health-delete-btn"
+                    title="Delete record"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="medical-info-grid">
+
+            <div class="medical-info-panel">
+
+                <span>Veterinarian</span>
+
+                <strong>
+                    {{ record.vet_name|default:"Not recorded" }}
+                </strong>
+
+            </div>
+
+
+            <div class="medical-info-panel">
+
+                <span>Record date</span>
+
+                <strong>
+                    {{ record.recorded_on|date:"M d, Y" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        {% if record.care_notes %}
+
+            <div class="medical-note-section">
+
+                <h3>
+                    Care & treatment notes
+                </h3>
+
+                <p>
+                    {{ record.care_notes|linebreaksbr }}
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+        {% if record.attachment %}
+
+            <div class="medical-attachment">
+
+                <i class="fa-solid fa-paperclip"></i>
+
+                <div>
+                    <strong>Medical attachment</strong>
+
+                    <small>
+                        Report, prescription or supporting file
+                    </small>
+                </div>
+
+                <a
+                    href="{{ record.attachment.url }}"
+                    target="_blank"
+                    class="pet-btn pet-btn-secondary ms-auto"
+                >
+                    Open file
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <div class="section-block">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title mb-0">
+                    Medications
+                </h2>
+
+                <p class="section-text">
+                    Medication associated with this medical record.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'medication_add' pet.pet_id record.record_id %}"
+                class="pet-btn pet-btn-primary"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Add medication
+            </a>
+
+        </div>
+
+
+        {% if record.medications.all %}
+
+            <div class="row g-4">
+
+                {% for medication in record.medications.all %}
+
+                    <div class="col-lg-6">
+
+                        <div class="medication-card reveal">
+
+                            <div class="medication-icon">
+                                <i class="fa-solid fa-pills"></i>
+                            </div>
+
+
+                            <div class="medication-content">
+
+                                <h3>
+                                    {{ medication.medication_name }}
+                                </h3>
+
+
+                                <div class="medication-tags">
+
+                                    <span>
+                                        {{ medication.dose }}
+                                    </span>
+
+                                    <span>
+                                        {{ medication.frequency }}
+                                    </span>
+
+                                    {% if medication.route %}
+                                        <span>
+                                            {{ medication.route }}
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+
+                                <p>
+                                    {{ medication.start_date|date:"M d, Y" }}
+
+                                    {% if medication.end_date %}
+                                        →
+                                        {{ medication.end_date|date:"M d, Y" }}
+                                    {% endif %}
+                                </p>
+
+                            </div>
+
+
+                            <div class="medication-actions">
+
+                                <a
+                                    href="{% url 'medication_edit' pet.pet_id record.record_id medication.medication_id %}"
+                                    title="Edit"
+                                >
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+
+                                <a
+                                    href="{% url 'medication_delete' pet.pet_id record.record_id medication.medication_id %}"
+                                    title="Delete"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="simple-empty-card">
+
+                <i class="fa-solid fa-pills"></i>
+
+                <div>
+                    <strong>No medication recorded</strong>
+                    <p>
+                        Add medication if treatment was prescribed.
+                    </p>
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

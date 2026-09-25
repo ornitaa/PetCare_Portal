@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | PetCare{% endblock %}
+
+{% block content %}
+
+<section class="pet-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-9">
+
+                <div class="health-form-card reveal">
+
+                    <a
+                        href="{% url 'medical_record_list' pet.pet_id %}"
+                        class="back-link"
+                    >
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Medical records
+                    </a>
+
+
+                    <span class="page-kicker d-block mt-4">
+                        {{ pet.name }} · Health
+                    </span>
+
+                    <h1 class="health-form-title">
+                        {{ page_title }}
+                    </h1>
+
+
+                    <form
+                        method="post"
+                        enctype="multipart/form-data"
+                        class="mt-4"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <div class="row g-4">
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Date
+                                </label>
+
+                                {{ form.recorded_on }}
+
+                                {% for error in form.recorded_on.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Record type
+                                </label>
+
+                                {{ form.record_kind }}
+
+                                {% for error in form.record_kind.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+
+                            <div class="col-12">
+                                <label class="form-label">
+                                    Diagnosis
+                                </label>
+
+                                {{ form.diagnosis }}
+
+                                {% for error in form.diagnosis.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+
+                            <div class="col-12">
+                                <label class="form-label">
+                                    Care / treatment notes
+                                </label>
+
+                                {{ form.care_notes }}
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Veterinarian
+                                </label>
+
+                                {{ form.vet_name }}
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    Attachment
+                                </label>
+
+                                {{ form.attachment }}
+
+                                <div class="form-hint">
+                                    PDF, JPG or PNG
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="clean-action-bar">
+
+                            <a
+                                href="{% url 'medical_record_list' pet.pet_id %}"
+                                class="pet-btn pet-btn-secondary"
+                            >
+                                Cancel
+                            </a>
+
+
+                            <button
+                                type="submit"
+                                class="pet-btn pet-btn-primary"
+                            >
+                                <i class="fa-solid fa-check"></i>
+                                {{ button_text }}
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

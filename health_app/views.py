@@ -7,7 +7,12 @@ from datetime import date
 from django.utils import timezone
 from pets_app.models import Pet
 import json
+from io import StringIO
+import os
+import secrets
 
+from django.core.management import call_command
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -1243,4 +1248,85 @@ def notification_settings(request):
             "firebase_vapid_key":
                 settings.FIREBASE_VAPID_KEY,
         },
+    )
+
+@csrf_exempt
+@require_POST
+def run_reminder_pushes(request):
+
+    expected_secret = os.getenv(
+        "REMINDER_CRON_SECRET",
+        "",
+    )
+
+    if not expected_secret:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Cron secret is not configured.",
+            },
+            status=503,
+        )
+
+    authorization = request.headers.get(
+        "Authorization",
+        "",
+    )
+
+    prefix = "Bearer "
+
+    if not authorization.startswith(prefix):
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Unauthorized.",
+            },
+            status=401,
+        )
+
+    provided_secret = authorization[
+        len(prefix):
+    ].strip()
+
+    if not secrets.compare_digest(
+        provided_secret,
+        expected_secret,
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Unauthorized.",
+            },
+            status=401,
+        )
+
+    output = StringIO()
+
+    try:
+
+        call_command(
+            "send_reminder_pushes",
+            stdout=output,
+        )
+
+    except Exception as exc:
+
+        print(
+            "Reminder cron failed:",
+            repr(exc),
+        )
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Reminder processing failed.",
+            },
+            status=500,
+        )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "message": "Reminder check completed.",
+        }
     )

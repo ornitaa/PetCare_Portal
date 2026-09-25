@@ -32,4 +32,9 @@ urlpatterns = [
         views.unregister_push_device,
         name="unregister_push_device",
     ),
+    path(
+    "internal/run-reminder-pushes/",
+    views.run_reminder_pushes,
+    name="run_reminder_pushes",
+    ),
 ]

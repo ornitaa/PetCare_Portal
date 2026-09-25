@@ -10646,3 +10646,183 @@ img {
     }
 
 }
+
+/* ============================================================
+   AUTH PAGES - MOBILE FIX
+   ============================================================ */
+
+@media (max-width: 767.98px) {
+
+    .auth-page {
+        padding: 28px 0 50px;
+    }
+
+
+    .auth-shell {
+        border-radius: 28px;
+    }
+
+
+    /* Make the illustration panel fit its content */
+    .auth-visual {
+        min-height: auto;
+
+        padding:
+            32px
+            24px
+            26px;
+    }
+
+
+    .auth-kicker {
+        margin-bottom: 14px;
+
+        font-size: 0.88rem;
+    }
+
+
+    .auth-side-title {
+        margin-bottom: 14px;
+
+        font-size:
+            clamp(
+                2.35rem,
+                10vw,
+                3rem
+            );
+
+        line-height: 1.02;
+    }
+
+
+    .auth-side-text {
+        max-width: none;
+
+        margin-bottom: 0;
+
+        font-size: 0.96rem;
+
+        line-height: 1.65;
+    }
+
+
+    /* Feature pills */
+    .auth-badges {
+        gap: 8px;
+
+        margin-top: 18px;
+    }
+
+
+    .auth-badge {
+        padding: 7px 11px;
+
+        font-size: 0.76rem;
+    }
+
+
+    /*
+     * IMPORTANT:
+     * On desktop the animals are absolutely positioned.
+     * On mobile put them back into normal document flow
+     * so they cannot overlap the badges.
+     */
+    .auth-animals {
+        position: static;
+
+        width: 100%;
+
+        margin-top: 22px;
+
+        font-size: 3.8rem;
+        line-height: 1;
+
+        text-align: center;
+    }
+
+
+    /* Smaller decorative circles for phone */
+    .auth-visual::before {
+        top: -90px;
+        right: -80px;
+
+        width: 250px;
+        height: 250px;
+    }
+
+
+    .auth-visual::after {
+        left: -80px;
+        bottom: -120px;
+
+        width: 250px;
+        height: 250px;
+    }
+
+
+    /* Form section */
+    .auth-form-panel {
+        min-height: auto;
+
+        padding:
+            36px
+            24px
+            40px;
+    }
+
+
+    .auth-title {
+        font-size: 2.55rem;
+    }
+
+
+    .auth-subtitle {
+        margin-bottom: 24px;
+    }
+
+}
+
+
+/* Extra-small phones */
+@media (max-width: 420px) {
+
+    .auth-visual {
+        padding:
+            28px
+            20px
+            24px;
+    }
+
+
+    .auth-side-title {
+        font-size: 2.35rem;
+    }
+
+
+    .auth-side-text {
+        font-size: 0.92rem;
+
+        line-height: 1.6;
+    }
+
+
+    .auth-animals {
+        margin-top: 20px;
+
+        font-size: 3.35rem;
+    }
+
+
+    .auth-form-panel {
+        padding:
+            32px
+            20px
+            36px;
+    }
+
+
+    .auth-title {
+        font-size: 2.35rem;
+    }
+
+}

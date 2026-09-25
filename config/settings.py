@@ -86,18 +86,69 @@ TEMPLATES = [
     },
 ]
 
+# ============================================================
+# DATABASE
+# Local development:
+#     normal local MySQL
+#
+# Production on Render:
+#     TiDB Cloud over TLS
+# ============================================================
+
+DB_OPTIONS = {
+    "charset": "utf8mb4",
+}
+
+
+# Enable secure TLS connection only when DB_SSL_CA
+# is supplied by the production environment.
+if os.getenv("DB_SSL_CA"):
+
+    DB_OPTIONS.update({
+
+        "ssl_ca": os.getenv(
+            "DB_SSL_CA"
+        ),
+
+        "ssl_verify_cert": True,
+
+        "ssl_verify_identity": True,
+
+    })
+
+
 DATABASES = {
+
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", "3306"),
-        "OPTIONS": {
-            "charset": "utf8mb4",
-        },
+
+        "ENGINE":
+            "django.db.backends.mysql",
+
+        "NAME":
+            os.getenv("DB_NAME"),
+
+        "USER":
+            os.getenv("DB_USER"),
+
+        "PASSWORD":
+            os.getenv("DB_PASSWORD"),
+
+        "HOST":
+            os.getenv(
+                "DB_HOST",
+                "localhost",
+            ),
+
+        "PORT":
+            os.getenv(
+                "DB_PORT",
+                "3306",
+            ),
+
+        "OPTIONS":
+            DB_OPTIONS,
     }
+
 }
 
 AUTH_PASSWORD_VALIDATORS = []

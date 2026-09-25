@@ -330,13 +330,7 @@ async function startNotifications() {
                 fid;
 
 
-            statusBox.textContent =
-                "Notifications are enabled.";
-
-
-            enableButton.hidden = true;
-
-            disableButton.hidden = false;
+            showNotificationsEnabled();
         }
     );
 
@@ -447,13 +441,18 @@ async function startNotifications() {
 
 
     if (
-        Notification.permission
-        === "granted"
-    ) {
+    Notification.permission
+    === "granted"
+) {
 
-        statusBox.textContent =
-            "Synchronizing notification registration...";
+    statusBox.textContent =
+        "Synchronizing notification registration...";
 
+    enableButton.hidden = true;
+    disableButton.hidden = true;
+
+
+    try {
 
         await register(
             messaging,
@@ -466,15 +465,59 @@ async function startNotifications() {
             }
         );
 
+
+        /*
+         * Registration succeeded.
+         *
+         * onRegistered() will synchronize the FID
+         * with Django, but we do not need to wait
+         * for that callback just to restore the UI.
+         */
+
+        showNotificationsEnabled();
+
     }
 
-    else {
+    catch (error) {
+
+        console.error(
+            "Notification synchronization failed:",
+            error
+        );
 
         statusBox.textContent =
-            "Notifications are currently disabled.";
+            "Could not synchronize notifications.";
+
+        enableButton.hidden = false;
+        disableButton.hidden = true;
     }
+
 }
 
+else {
+
+    showNotificationsDisabled();
+}
+}
+
+function showNotificationsEnabled() {
+
+    statusBox.textContent =
+        "Notifications are enabled.";
+
+    enableButton.hidden = true;
+    disableButton.hidden = false;
+}
+
+
+function showNotificationsDisabled() {
+
+    statusBox.textContent =
+        "Notifications are currently disabled.";
+
+    enableButton.hidden = false;
+    disableButton.hidden = true;
+}
 
 startNotifications();
 

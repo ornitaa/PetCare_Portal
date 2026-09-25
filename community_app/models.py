@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 
 class CommunityPost(models.Model):
 
@@ -24,12 +24,14 @@ class CommunityPost(models.Model):
 
     body = models.TextField()
 
-    image = models.ImageField(
-        upload_to="community/",
-        db_column="image_url",
-        max_length=500,
-        blank=True,
-        null=True,
+    image = CloudinaryField(
+    "image",
+    resource_type="image",
+    asset_folder="petcare/community",
+    use_asset_folder_as_public_id_prefix=True,
+    db_column="image_url",
+    blank=True,
+    null=True,
     )
 
     moderation_status = models.CharField(

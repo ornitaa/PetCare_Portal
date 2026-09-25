@@ -4,6 +4,7 @@ CacheControl==0.14.4
 certifi==2026.7.22
 cffi==2.1.1
 charset-normalizer==3.5.1
+cloudinary==1.46.2
 cryptography==50.0.1
 Django==5.2.17
 firebase_admin==7.7.0
@@ -38,6 +39,7 @@ PyJWT==2.15.0
 PyMySQL==1.2.0
 python-dotenv==1.2.3
 requests==2.34.2
+six==1.17.0
 sqlparse==0.6.0
 typing_extensions==4.16.0
 tzdata==2026.4

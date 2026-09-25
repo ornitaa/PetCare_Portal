@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 from pets_app.models import Pet
 
 
@@ -51,12 +51,14 @@ class PetReport(models.Model):
         null=True,
     )
 
-    photo = models.ImageField(
-        upload_to="pet_reports/",
-        db_column="photo_url",
-        max_length=500,
-        blank=True,
-        null=True,
+    photo = CloudinaryField(
+    "photo",
+    resource_type="image",
+    asset_folder="petcare/lost_found",
+    use_asset_folder_as_public_id_prefix=True,
+    db_column="photo_url",
+    blank=True,
+    null=True,
     )
 
     report_status = models.CharField(

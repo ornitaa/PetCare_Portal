@@ -43,7 +43,7 @@
 
 
 
-                                <div class="pet-photo-preview">
+                                <label for="{{ form.photo.id_for_label }}" class="pet-photo-preview pet-photo-clickable">
 
 
                                     {% if pet and pet.photo %}
@@ -85,14 +85,13 @@
                                     {% endif %}
 
 
-                                </div>
+                                </label>
 
 
 
-                                <div class="pet-form-tip">
+                                <label for="{{ form.photo.id_for_label }}" class="pet-form-tip pet-photo-clickable">
 
                                     <i class="fa-solid fa-camera"></i>
-
 
                                     <div>
 
@@ -100,14 +99,13 @@
                                             {% trans "Add a clear photo" %}
                                         </strong>
 
-
                                         <small>
                                             {% trans "It makes the pet profile easier to recognize." %}
                                         </small>
 
                                     </div>
 
-                                </div>
+                                </label>
 
 
                             </div>

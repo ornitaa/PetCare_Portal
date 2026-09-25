@@ -5,6 +5,11 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
+import cloudinary
+
+cloudinary.config(
+    secure=True,
+)
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "")
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv(
@@ -39,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary",
     "users_app",
     "pets_app",
     "health_app",

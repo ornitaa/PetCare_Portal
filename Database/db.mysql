@@ -414,15 +414,6 @@ CREATE TABLE comments (
 
 SHOW TABLES;
 
-CREATE USER IF NOT EXISTS 'petcare_app'@'localhost'
-IDENTIFIED BY 'PetCare@2026';
-
-GRANT ALL PRIVILEGES
-ON petcare_portal.*
-TO 'petcare_app'@'localhost';
-
-FLUSH PRIVILEGES;
-
 USE petcare_portal;
 
 ALTER TABLE users

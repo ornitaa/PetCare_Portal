@@ -45,7 +45,10 @@
     --radius-sm: 14px;
 }
 
-
+/* Always respect the HTML hidden attribute */
+[hidden] {
+    display: none !important;
+}
 /* ============================================================
    GLOBAL
    ============================================================ */

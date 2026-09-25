@@ -443,18 +443,22 @@ async function startNotifications() {
     if (
     Notification.permission
     === "granted"
-) {
+    ) {
 
-    statusBox.textContent =
-        "Synchronizing notification registration...";
+        /*
+         * Browser permission is already granted.
+         * Restore the correct UI immediately.
+         */
+        showNotificationsEnabled();
 
-    enableButton.hidden = true;
-    disableButton.hidden = true;
 
-
-    try {
-
-        await register(
+        /*
+         * Re-synchronize Firebase registration
+         * in the background.
+        *
+        * Do NOT block the page UI while waiting.
+        */
+        register(
             messaging,
             {
                 vapidKey:
@@ -463,41 +467,24 @@ async function startNotifications() {
                 serviceWorkerRegistration:
                     serviceWorkerRegistration
             }
+        )
+        .catch(
+            function (error) {
+
+                console.error(
+                    "Notification synchronization failed:",
+                    error
+                );
+
+            }
         );
-
-
-        /*
-         * Registration succeeded.
-         *
-         * onRegistered() will synchronize the FID
-         * with Django, but we do not need to wait
-         * for that callback just to restore the UI.
-         */
-
-        showNotificationsEnabled();
 
     }
 
-    catch (error) {
+    else {
 
-        console.error(
-            "Notification synchronization failed:",
-            error
-        );
-
-        statusBox.textContent =
-            "Could not synchronize notifications.";
-
-        enableButton.hidden = false;
-        disableButton.hidden = true;
+        showNotificationsDisabled();
     }
-
-}
-
-else {
-
-    showNotificationsDisabled();
-}
 }
 
 function showNotificationsEnabled() {

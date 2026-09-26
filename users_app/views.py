@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 
 from pets_app.models import Pet
 
-from health_app.models import Vaccination, CareReminder
+from health_app.models import Vaccination, CareReminder, PushDevice
 from community_app.models import CommunityPost
 from adoption_app.models import AdoptionListing
 User = get_user_model()
@@ -121,6 +121,20 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
+
+    current_fid = request.session.get(
+        "push_fid"
+    )
+
+    if current_fid:
+
+        PushDevice.objects.filter(
+            user=request.user,
+            firebase_fid=current_fid,
+        ).update(
+            is_active=False
+        )
+
     logout(request)
 
     messages.success(
@@ -129,7 +143,6 @@ def logout_view(request):
     )
 
     return redirect("login")
-
 
 @login_required
 def dashboard(request):

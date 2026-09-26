@@ -132,6 +132,7 @@ class Command(BaseCommand):
 
                         headers={
                             "Urgency": "high",
+                            "TTL": "3600",
                         },
 
                         notification=(
@@ -257,10 +258,16 @@ class Command(BaseCommand):
                     )
 
 
-            if successful_devices > 0:
+            active_device_count = devices.count()
+
+            if (
+                active_device_count > 0
+                and successful_devices
+                == active_device_count
+            ):
 
                 reminder.notification_sent_at = (
-                    timezone.now()
+                timezone.now()
                 )
 
                 reminder.save(
@@ -268,6 +275,32 @@ class Command(BaseCommand):
                         "notification_sent_at"
                     ]
                 )
+
+                sent_reminders += 1
+
+                self.stdout.write(
+                self.style.SUCCESS(
+                (
+                    f"Reminder "
+                    f"#{reminder.reminder_id} "
+                    "marked as notified."
+                )
+                )
+            )
+
+            else:
+
+                self.stdout.write(
+                self.style.WARNING(
+                    (
+                        f"Reminder "
+                        f"#{reminder.reminder_id} "
+                        "was not delivered to all "
+                        "active devices. "
+                        "It will be retried."
+                    )
+                )
+            )
 
 
                 sent_reminders += 1

@@ -1139,9 +1139,10 @@ def register_push_device(request):
                     timezone.now(),
             },
         )
+        
     )
 
-
+    request.session["push_fid"] = fid
     return JsonResponse(
         {
             "success": True,

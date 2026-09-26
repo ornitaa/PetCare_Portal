@@ -81,10 +81,20 @@ Reminder Notifications | PetCare
 
 <script type="module">
 
+/* ============================================================
+   FIREBASE APP
+   ============================================================ */
+
 import {
-    initializeApp
+    initializeApp,
+    getApps,
+    getApp
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
+
+/* ============================================================
+   FIREBASE MESSAGING
+   ============================================================ */
 
 import {
     getMessaging,
@@ -96,6 +106,21 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
 
 
+/* ============================================================
+   FIREBASE INSTALLATIONS
+   Gives us the current Firebase Installation ID directly.
+   ============================================================ */
+
+import {
+    getInstallations,
+    getId
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-installations.js";
+
+
+
+/* ============================================================
+   FIREBASE CONFIG
+   ============================================================ */
 
 const firebaseConfig = {
 
@@ -123,6 +148,11 @@ const vapidKey =
     "{{ firebase_vapid_key|escapejs }}";
 
 
+
+/* ============================================================
+   PAGE ELEMENTS
+   ============================================================ */
+
 const enableButton =
     document.getElementById(
         "enablePushNotifications"
@@ -142,9 +172,105 @@ const statusBox =
 
 
 
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+
+function showNotificationsEnabled() {
+
+    statusBox.textContent =
+        "Notifications are enabled on this device.";
+
+    enableButton.hidden = true;
+    enableButton.disabled = false;
+
+    disableButton.hidden = false;
+    disableButton.disabled = false;
+}
+
+
+function showNotificationsDisabled() {
+
+    statusBox.textContent =
+        "Notifications are currently disabled.";
+
+    enableButton.hidden = false;
+    enableButton.disabled = false;
+
+    disableButton.hidden = true;
+    disableButton.disabled = false;
+}
+
+
+function showSynchronizing() {
+
+    statusBox.textContent =
+        "Synchronizing this device...";
+
+    enableButton.hidden = true;
+    disableButton.hidden = true;
+}
+
+
+function showRegistrationError(message) {
+
+    statusBox.textContent = message;
+
+    enableButton.hidden = false;
+    enableButton.disabled = false;
+
+    disableButton.hidden = true;
+}
+
+
+
+/* ============================================================
+   TIMEOUT HELPER
+
+   Prevent Firebase/network operations from leaving the page
+   stuck forever.
+   ============================================================ */
+
+function withTimeout(
+    promise,
+    milliseconds,
+    message
+) {
+
+    return Promise.race([
+
+        promise,
+
+        new Promise(
+            function (_, reject) {
+
+                setTimeout(
+                    function () {
+
+                        reject(
+                            new Error(message)
+                        );
+
+                    },
+                    milliseconds
+                );
+
+            }
+        )
+
+    ]);
+}
+
+
+
+/* ============================================================
+   CSRF COOKIE
+   ============================================================ */
+
 function getCookie(name) {
 
     let cookieValue = null;
+
 
     if (
         document.cookie &&
@@ -156,7 +282,8 @@ function getCookie(name) {
 
 
         for (
-            const cookieText of cookies
+            const cookieText
+            of cookies
         ) {
 
             const cookie =
@@ -181,6 +308,7 @@ function getCookie(name) {
         }
     }
 
+
     return cookieValue;
 }
 
@@ -190,79 +318,166 @@ const csrfToken =
 
 
 
+/* ============================================================
+   SAVE DEVICE TO DJANGO
+   ============================================================ */
+
 async function saveFID(fid) {
 
+    if (!fid) {
+
+        throw new Error(
+            "Firebase Installation ID is empty."
+        );
+    }
+
+
     const response =
-        await fetch(
-            "{% url 'register_push_device' %}",
-            {
-                method: "POST",
+        await withTimeout(
 
-                headers: {
-                    "Content-Type":
-                        "application/json",
+            fetch(
+                "{% url 'register_push_device' %}",
+                {
+                    method: "POST",
 
-                    "X-CSRFToken":
-                        csrfToken
-                },
+                    headers: {
 
-                credentials:
-                    "same-origin",
+                        "Content-Type":
+                            "application/json",
 
-                body:
-                    JSON.stringify({
-                        fid: fid,
+                        "X-CSRFToken":
+                            csrfToken
+                    },
 
-                        device_name:
-                            navigator.userAgent
-                                .substring(
-                                    0,
-                                    120
-                                )
-                    })
-            }
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+
+                            fid: fid,
+
+                            device_name:
+                                navigator.userAgent
+                                    .substring(
+                                        0,
+                                        120
+                                    )
+                        })
+                }
+            ),
+
+            10000,
+
+            "PetCare device registration timed out."
         );
 
 
     if (!response.ok) {
 
         throw new Error(
-            "Could not save browser registration."
+            "Django could not save "
+            + "this device. HTTP "
+            + response.status
+        );
+    }
+
+
+    const result =
+        await response.json();
+
+
+    if (!result.success) {
+
+        throw new Error(
+            result.message
+            ||
+            "Device registration failed."
+        );
+    }
+
+
+    console.log(
+        "[PetCare] FID synchronized with Django:",
+        result
+    );
+
+
+    return result;
+}
+
+
+
+/* ============================================================
+   DISABLE DEVICE IN DJANGO
+   ============================================================ */
+
+async function disableFID(fid) {
+
+    if (!fid) {
+
+        return;
+    }
+
+
+    const response =
+        await withTimeout(
+
+            fetch(
+                "{% url 'unregister_push_device' %}",
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            csrfToken
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify({
+                            fid: fid
+                        })
+                }
+            ),
+
+            10000,
+
+            "Device removal timed out."
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Could not disable device. HTTP "
+            + response.status
         );
     }
 }
 
 
 
-async function disableFID(fid) {
-
-    await fetch(
-        "{% url 'unregister_push_device' %}",
-        {
-            method: "POST",
-
-            headers: {
-                "Content-Type":
-                    "application/json",
-
-                "X-CSRFToken":
-                    csrfToken
-            },
-
-            credentials:
-                "same-origin",
-
-            body:
-                JSON.stringify({
-                    fid: fid
-                })
-        }
-    );
-}
-
-
+/* ============================================================
+   MAIN NOTIFICATION SETUP
+   ============================================================ */
 
 async function startNotifications() {
+
+    console.log(
+        "[PetCare] Starting notification settings."
+    );
+
+
+    /* --------------------------------------------------------
+       BROWSER SUPPORT
+       -------------------------------------------------------- */
 
     const supported =
         await isSupported();
@@ -274,30 +489,50 @@ async function startNotifications() {
             "This browser does not support "
             + "Firebase web notifications.";
 
+        enableButton.hidden = false;
         enableButton.disabled = true;
+
+        disableButton.hidden = true;
 
         return;
     }
 
 
+    /* --------------------------------------------------------
+       PERMISSION BLOCKED
+       -------------------------------------------------------- */
+
     if (
-        Notification.permission === "denied"
+        Notification.permission
+        === "denied"
     ) {
 
         statusBox.textContent =
-            "Notifications are blocked in "
-            + "your browser settings.";
+            "Notifications are blocked in your "
+            + "browser or device settings.";
 
+        enableButton.hidden = false;
         enableButton.disabled = true;
+
+        disableButton.hidden = true;
 
         return;
     }
 
 
+
+    /* --------------------------------------------------------
+       INITIALIZE FIREBASE SAFELY
+
+       base.html may already have initialized Firebase.
+       -------------------------------------------------------- */
+
     const firebaseApp =
-        initializeApp(
-            firebaseConfig
-        );
+        getApps().length > 0
+            ? getApp()
+            : initializeApp(
+                firebaseConfig
+            );
 
 
     const messaging =
@@ -306,133 +541,410 @@ async function startNotifications() {
         );
 
 
-    const serviceWorkerRegistration =
-        await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js"
+    const installations =
+        getInstallations(
+            firebaseApp
         );
 
 
+
+    /* --------------------------------------------------------
+       SERVICE WORKER
+       -------------------------------------------------------- */
+
+    const serviceWorkerRegistration =
+        await withTimeout(
+
+            navigator
+                .serviceWorker
+                .register(
+                    "/firebase-messaging-sw.js"
+                ),
+
+            15000,
+
+            "Service worker registration timed out."
+        );
+
+
+    console.log(
+        "[PetCare] Service worker ready:",
+        serviceWorkerRegistration.scope
+    );
+
+
+
+    /* ========================================================
+       FIREBASE REGISTRATION CALLBACK
+
+       Firebase can call this when:
+       - manual registration completes
+       - FID changes
+       - push subscription changes
+
+       We keep it so Django stays synchronized automatically.
+       ======================================================== */
 
     onRegistered(
         messaging,
         async function (fid) {
 
             console.log(
-                "Firebase Installation ID:",
+                "[PetCare] Firebase installation registered:",
                 fid
             );
 
 
-            await saveFID(fid);
+            try {
+
+                await saveFID(
+                    fid
+                );
 
 
-            window.petcareCurrentFID =
-                fid;
+                window.petcareCurrentFID =
+                    fid;
 
 
-            showNotificationsEnabled();
+                showNotificationsEnabled();
+
+
+                console.log(
+                    "[PetCare] Device synchronized "
+                    + "successfully."
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "[PetCare] Could not save FID:",
+                    error
+                );
+
+
+                showRegistrationError(
+                    "Could not register this device. "
+                    + "Please try again."
+                );
+            }
+
         }
     );
 
 
+
+    /* ========================================================
+       FIREBASE UNREGISTER CALLBACK
+       ======================================================== */
 
     onUnregistered(
         messaging,
         async function (fid) {
 
-            await disableFID(fid);
+            console.log(
+                "[PetCare] Firebase installation unregistered:",
+                fid
+            );
 
 
-            statusBox.textContent =
-                "Notifications are disabled.";
+            try {
+
+                await disableFID(
+                    fid
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "[PetCare] Could not deactivate FID:",
+                    error
+                );
+            }
 
 
-            enableButton.hidden = false;
+            if (
+                window.petcareCurrentFID
+                === fid
+            ) {
 
-            disableButton.hidden = true;
+                window.petcareCurrentFID =
+                    null;
+            }
+
+
+            showNotificationsDisabled();
+
         }
     );
+
+
+
+    /* ========================================================
+       REGISTER CURRENT DEVICE
+
+       This function is used both when the user presses Enable
+       and when an already-authorized device is synchronized.
+       ======================================================== */
+
+    async function registerCurrentDevice() {
+
+        showSynchronizing();
+
+
+        console.log(
+            "[PetCare] Registering current device..."
+        );
+
+
+        /*
+         * Register this installation with Firebase Cloud
+         * Messaging.
+         */
+
+        await withTimeout(
+
+            register(
+                messaging,
+                {
+                    vapidKey:
+                        vapidKey,
+
+                    serviceWorkerRegistration:
+                        serviceWorkerRegistration
+                }
+            ),
+
+            15000,
+
+            "Firebase registration timed out."
+        );
+
+
+        /*
+         * Do not depend only on onRegistered().
+         *
+         * Read the current Installation ID directly so that
+         * this page can always synchronize the device with
+         * Django.
+         */
+
+        const fid =
+            await withTimeout(
+
+                getId(
+                    installations
+                ),
+
+                10000,
+
+                "Could not retrieve Firebase Installation ID."
+            );
+
+
+        console.log(
+            "[PetCare] Current Firebase FID:",
+            fid
+        );
+
+
+        /*
+         * Save FID to the logged-in Django user.
+         */
+
+        await saveFID(
+            fid
+        );
+
+
+        window.petcareCurrentFID =
+            fid;
+
+
+        showNotificationsEnabled();
+
+
+        console.log(
+            "[PetCare] Notification registration completed."
+        );
+
+
+        return fid;
+    }
+
+
+
+    /* ========================================================
+       ENABLE BUTTON
+       ======================================================== */
 
     enableButton.addEventListener(
         "click",
         async function () {
 
-            const permission =
-                await Notification
-                    .requestPermission();
-
-
-            if (
-                permission !== "granted"
-            ) {
-
-                statusBox.textContent =
-                    "Notification permission "
-                    + "was not granted.";
-
-                return;
-            }
-
-
-            statusBox.textContent =
-                "Registering this browser...";
+            enableButton.disabled = true;
 
 
             try {
 
-                await register(
-                    messaging,
-                    {
-                        vapidKey:
-                            vapidKey,
+                const permission =
+                    await Notification
+                        .requestPermission();
 
-                        serviceWorkerRegistration:
-                            serviceWorkerRegistration
-                    }
+
+                console.log(
+                    "[PetCare] Permission result:",
+                    permission
                 );
+
+
+                if (
+                    permission !== "granted"
+                ) {
+
+                    statusBox.textContent =
+                        "Notification permission "
+                        + "was not granted.";
+
+                    enableButton.hidden = false;
+                    enableButton.disabled = false;
+
+                    disableButton.hidden = true;
+
+                    return;
+                }
+
+
+                await registerCurrentDevice();
 
             }
 
             catch (error) {
 
-                console.error(error);
+                console.error(
+                    "[PetCare] Enable notification error:",
+                    error
+                );
 
-                statusBox.textContent =
-                    "Could not enable notifications.";
+
+                showRegistrationError(
+                    "Could not enable notifications. "
+                    + "Please try again."
+                );
+
             }
 
         }
     );
 
 
+
+    /* ========================================================
+       DISABLE BUTTON
+       ======================================================== */
 
     disableButton.addEventListener(
         "click",
         async function () {
 
+            disableButton.disabled = true;
+
+
             try {
 
-                await unregister(
-                    messaging
+                /*
+                 * Save the FID BEFORE unregistering.
+                 * We need it to deactivate the correct Django
+                 * PushDevice row.
+                 */
+
+                let currentFID =
+                    window.petcareCurrentFID;
+
+
+                if (!currentFID) {
+
+                    try {
+
+                        currentFID =
+                            await getId(
+                                installations
+                            );
+
+                    }
+
+                    catch (fidError) {
+
+                        console.warn(
+                            "[PetCare] Could not read "
+                            + "current FID before unregister:",
+                            fidError
+                        );
+
+                    }
+                }
+
+
+                await withTimeout(
+
+                    unregister(
+                        messaging
+                    ),
+
+                    15000,
+
+                    "Firebase unregister timed out."
                 );
 
 
-                statusBox.textContent =
-                    "Notifications are disabled.";
+                /*
+                 * Deactivate it directly as well.
+                 *
+                 * onUnregistered() will normally do this too,
+                 * but update is safe to repeat.
+                 */
+
+                if (currentFID) {
+
+                    await disableFID(
+                        currentFID
+                    );
+
+                }
 
 
-                enableButton.hidden = false;
+                window.petcareCurrentFID =
+                    null;
 
-                disableButton.hidden = true;
+
+                showNotificationsDisabled();
+
+
+                console.log(
+                    "[PetCare] Notifications disabled."
+                );
 
             }
 
             catch (error) {
 
-                console.error(error);
+                console.error(
+                    "[PetCare] Disable notification error:",
+                    error
+                );
+
 
                 statusBox.textContent =
-                    "Could not disable notifications.";
+                    "Could not disable notifications. "
+                    + "Please try again.";
+
+
+                disableButton.hidden = false;
+                disableButton.disabled = false;
+
             }
 
         }
@@ -440,74 +952,78 @@ async function startNotifications() {
 
 
 
+    /* ========================================================
+       PAGE STARTUP STATE
+       ======================================================== */
+
     if (
-    Notification.permission
-    === "granted"
+        Notification.permission
+        === "granted"
     ) {
 
         /*
-         * Browser permission is already granted.
-         * Restore the correct UI immediately.
+         * Permission exists, but that does NOT automatically
+         * mean the device is stored in Django.
+         *
+         * Synchronize it now.
          */
-        showNotificationsEnabled();
+
+        try {
+
+            await registerCurrentDevice();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "[PetCare] Startup synchronization failed:",
+                error
+            );
 
 
-        /*
-         * Re-synchronize Firebase registration
-         * in the background.
-        *
-        * Do NOT block the page UI while waiting.
-        */
-        register(
-            messaging,
-            {
-                vapidKey:
-                    vapidKey,
+            showRegistrationError(
+                "Could not synchronize this device. "
+                + "Press Enable notifications to retry."
+            );
 
-                serviceWorkerRegistration:
-                    serviceWorkerRegistration
-            }
-        )
-        .catch(
-            function (error) {
-
-                console.error(
-                    "Notification synchronization failed:",
-                    error
-                );
-
-            }
-        );
+        }
 
     }
 
     else {
 
         showNotificationsDisabled();
+
     }
-}
 
-function showNotificationsEnabled() {
-
-    statusBox.textContent =
-        "Notifications are enabled.";
-
-    enableButton.hidden = true;
-    disableButton.hidden = false;
 }
 
 
-function showNotificationsDisabled() {
 
-    statusBox.textContent =
-        "Notifications are currently disabled.";
+/* ============================================================
+   START
+   ============================================================ */
 
-    enableButton.hidden = false;
-    disableButton.hidden = true;
-}
+startNotifications()
+    .catch(
+        function (error) {
 
-startNotifications();
+            console.error(
+                "[PetCare] Notification setup failed:",
+                error
+            );
+
+
+            showRegistrationError(
+                "Notification setup failed. "
+                + "Please reload the page and try again."
+            );
+
+        }
+    );
 
 </script>
+
 
 {% endblock %}
